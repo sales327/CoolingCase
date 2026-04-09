@@ -212,11 +212,36 @@ textarea {
 }
 
 main {
-  padding: 0.9rem 0 3.75rem;
+  padding: 0.65rem 0 3.75rem;
 }
 
 .hero-section {
-  padding-top: 1rem;
+  padding-top: 0.35rem;
+}
+
+.hero-meta-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem 1rem;
+  margin-bottom: 0.45rem;
+  padding: 0 0.2rem;
+}
+
+.hero-status-bar {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.hero-status-bar span[aria-hidden="true"] {
+  opacity: 0.48;
 }
 
 .hero-shell {
@@ -237,28 +262,10 @@ main {
   position: absolute;
   inset: 0;
   z-index: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(12rem, 20rem);
-  align-items: start;
-  padding: clamp(1.25rem, 3vw, 2.35rem);
-  background-image:
-    linear-gradient(90deg, rgba(244, 238, 228, 0.84) 0%, rgba(244, 238, 228, 0.72) 22%, rgba(244, 238, 228, 0.42) 40%, rgba(244, 238, 228, 0.14) 60%, rgba(244, 238, 228, 0.03) 78%, rgba(244, 238, 228, 0) 100%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(86, 58, 31, 0.1)),
-    url("assets/hero-background-desktop.png");
-  background-position: center, center, center;
+  background-image: url("assets/hero-background-desktop.png");
+  background-position: center center;
   background-repeat: no-repeat;
-  background-size: auto, auto, cover;
-}
-
-.hero-backdrop-column {
-  min-width: 0;
-  position: relative;
-  z-index: 1;
-}
-
-.hero-backdrop-column-right {
-  display: flex;
-  justify-content: flex-end;
+  background-size: cover;
 }
 
 .hero-backdrop::after {
@@ -266,7 +273,9 @@ main {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.1));
+  background:
+    linear-gradient(90deg, rgba(244, 238, 228, 0.72) 0%, rgba(244, 238, 228, 0.52) 24%, rgba(244, 238, 228, 0.22) 44%, rgba(244, 238, 228, 0.06) 64%, rgba(244, 238, 228, 0) 78%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(86, 58, 31, 0.12));
   pointer-events: none;
 }
 
@@ -294,6 +303,10 @@ main {
   backdrop-filter: none;
 }
 
+.hero-details {
+  max-width: 34rem;
+}
+
 .hero-meta {
   display: block;
   margin-bottom: 0.95rem;
@@ -311,8 +324,10 @@ main {
 
 .hero-origin {
   margin: 0;
+  justify-self: end;
   text-align: right;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.16);
+  white-space: nowrap;
 }
 
 .status-pill {
@@ -436,6 +451,10 @@ main {
   background: rgba(255, 252, 247, 0.74);
   border-color: rgba(92, 83, 73, 0.14);
   box-shadow: var(--shadow-sm);
+}
+
+.button strong {
+  font-weight: 800;
 }
 
 .hero-note {
@@ -899,11 +918,7 @@ textarea:focus {
   }
 
   .hero-backdrop {
-    background-image:
-      linear-gradient(180deg, rgba(244, 238, 228, 0.76) 0%, rgba(244, 238, 228, 0.58) 34%, rgba(244, 238, 228, 0.22) 100%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(86, 58, 31, 0.1)),
-      url("assets/hero-background-desktop.png");
-    background-position: center, center, center;
+    background-position: center center;
   }
 
   .hero-copy h1 {
@@ -917,12 +932,23 @@ textarea:focus {
 
 @media (max-width: 720px) {
   main {
+    padding-top: 0.35rem;
     padding-bottom: 3.25rem;
   }
 
   .header-inner {
     min-height: 3.8rem;
     gap: 0.75rem;
+  }
+
+  .hero-section {
+    padding-top: 0.15rem;
+  }
+
+  .hero-meta-bar {
+    gap: 0.2rem 0.7rem;
+    margin-bottom: 0.3rem;
+    padding: 0 0.15rem;
   }
 
   .hero-shell,
@@ -934,67 +960,79 @@ textarea:focus {
   }
 
   .hero-copy h1 {
-    max-width: 8.5ch;
-    font-size: clamp(2.15rem, 12vw, 3.15rem);
+    width: 100%;
+    max-width: none;
+    font-size: clamp(2.2rem, 9.9vw, 2.6rem);
+    line-height: 0.88;
+    letter-spacing: -0.07em;
+    text-wrap: balance;
   }
 
   .hero-shell {
-    min-height: 31rem;
-    align-items: flex-start;
-    padding: 1rem;
+    min-height: 35rem;
+    align-items: stretch;
+    padding: 0.8rem 0.85rem 0.95rem;
   }
 
   .hero-backdrop {
-    grid-template-columns: minmax(0, 1fr) minmax(7rem, 9.5rem);
-    padding: 1rem;
-    background-image:
-      linear-gradient(180deg, rgba(244, 238, 228, 0.84) 0%, rgba(244, 238, 228, 0.72) 18%, rgba(244, 238, 228, 0.52) 34%, rgba(244, 238, 228, 0.24) 52%, rgba(244, 238, 228, 0.08) 72%, rgba(244, 238, 228, 0.02) 100%),
-      linear-gradient(90deg, rgba(244, 238, 228, 0.76) 0%, rgba(244, 238, 228, 0.54) 34%, rgba(244, 238, 228, 0.18) 62%, rgba(244, 238, 228, 0) 100%),
-      url("assets/hero-background-mobile.png");
-    background-position: center, center, 76% bottom;
+    background-image: url("assets/hero-background-mobile.png");
+    background-position: center center;
+  }
+
+  .hero-backdrop::after {
+    background:
+      linear-gradient(180deg, rgba(244, 238, 228, 0.62) 0%, rgba(244, 238, 228, 0.52) 16.67%, rgba(244, 238, 228, 0.16) 38%, rgba(244, 238, 228, 0.04) 62%, rgba(244, 238, 228, 0.2) 76%, rgba(244, 238, 228, 0.56) 100%),
+      linear-gradient(90deg, rgba(244, 238, 228, 0.2) 0%, rgba(244, 238, 228, 0.12) 34%, rgba(244, 238, 228, 0.04) 58%, rgba(244, 238, 228, 0) 76%);
   }
 
   .hero-copy {
+    display: flex;
+    flex-direction: column;
     max-width: 100%;
-    padding: 0.9rem 0 0;
+    min-height: 100%;
+    padding: 0.15rem 0 0;
+  }
+
+  .hero-details {
+    max-width: none;
+    margin-top: auto;
   }
 
   .hero-text {
-    max-width: 20rem;
-    font-size: 0.89rem;
-    line-height: 1.34;
+    max-width: none;
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.3;
   }
 
   .hero-points {
-    max-width: 20rem;
-    gap: 0.28rem;
+    max-width: none;
+    gap: 0.22rem;
+    margin: 0;
   }
 
   .hero-points li {
-    gap: 0.58rem;
-    font-size: 0.88rem;
-    line-height: 1.28;
+    gap: 0.56rem;
+    font-size: 0.84rem;
+    line-height: 1.2;
   }
 
-  .hero-meta {
-    margin-bottom: 0.65rem;
+  .hero-points li::before {
+    width: 0.46rem;
+    height: 0.46rem;
+    margin-top: 0.38rem;
+    box-shadow: 0 0 0 0.22rem rgba(184, 66, 34, 0.1);
   }
 
-  .status-pill {
-    gap: 0.3rem;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    font-size: 0.83rem;
-    line-height: 1.25;
+  .hero-status-bar {
+    font-size: 0.74rem;
+    line-height: 1.18;
   }
 
   .hero-origin {
-    font-size: 0.56rem;
-    letter-spacing: 0.1em;
-    opacity: 0.54;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    opacity: 0.74;
     text-align: right;
   }
 
@@ -1008,6 +1046,12 @@ textarea:focus {
   .form-actions,
   .footer-nav {
     gap: 0.75rem;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
   }
 
   .header-summary {
@@ -1049,6 +1093,16 @@ textarea:focus {
 
   .button {
     width: 100%;
+    min-height: 2.95rem;
+    padding: 0 0.9rem;
+    font-size: 0.92rem;
+  }
+
+  .hero-note {
+    margin: 0.05rem 0 0;
+    max-width: none;
+    font-size: 0.78rem;
+    line-height: 1.25;
   }
 
   .pricing-grid {
