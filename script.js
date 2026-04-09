@@ -26,13 +26,16 @@ const ogUrl = document.getElementById("og-url");
 const ogLocale = document.getElementById("og-locale");
 const twitterTitle = document.getElementById("twitter-title");
 const twitterDescription = document.getElementById("twitter-description");
+const gaMeasurementIdMeta = document.getElementById("ga-measurement-id");
 
 const LANGUAGE_KEY = "cooling-case-language";
 const PRIORITY_LIMIT = 3;
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+const GA_MEASUREMENT_ID_PATTERN = /^G-[A-Z0-9]+$/i;
 
 let currentLanguage = "en";
 let lastSubmissionHadEmail = null;
+let googleAnalyticsInitialized = false;
 
 const translations = {
   en: {
@@ -56,6 +59,7 @@ const translations = {
     heroNote: "Concept only. Under development. No product currently for sale.",
     pricingLabel: "Indicative pricing",
     pricingTitle: "Reference pricing for the first production batch.",
+    pricingNote: "Non-binding concept prices. Final pricing may change.",
     pricePhones: "Phones",
     priceTablets: "Tablets",
     priceRuggedPhones: "Rugged phones",
@@ -305,9 +309,64 @@ translations.de.pageTitle =
   "Eiskalt Cooling Case | K\u00FChlung f\u00FCr Handy und Tablet bei extremer Hitze";
 translations.de.pageDescription =
   "Eiskalt Cooling Case ist ein Schweizer Cooling-Case-Konzept f\u00FCr Smartphones und Tablets bei extremer Hitze, Blendung, Drosselung und Abschaltrisiko im Ausseneinsatz.";
+translations.de.pricingNote =
+  "Unverbindliche Konzeptpreise. Endg\u00FCltige Preise k\u00F6nnen sich \u00E4ndern.";
 
 function getText(key) {
   return translations[currentLanguage][key];
+}
+
+function trackAnalyticsPageView() {
+  if (typeof window.gtag !== "function") {
+    return;
+  }
+
+  window.gtag("event", "page_view", {
+    page_title: document.title,
+    page_location: window.location.href.split("#")[0],
+    language: document.documentElement.lang,
+  });
+}
+
+function initGoogleAnalytics() {
+  if (googleAnalyticsInitialized) {
+    return;
+  }
+
+  const measurementId = gaMeasurementIdMeta?.getAttribute("content")?.trim() || "";
+
+  if (!GA_MEASUREMENT_ID_PATTERN.test(measurementId)) {
+    return;
+  }
+
+  googleAnalyticsInitialized = true;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function gtag() {
+    window.dataLayer.push(arguments);
+  };
+
+  window.gtag("consent", "default", {
+    analytics_storage: "denied",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    functionality_storage: "granted",
+    security_storage: "granted",
+  });
+
+  window.gtag("js", new Date());
+  window.gtag("config", measurementId, {
+    send_page_view: false,
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false,
+  });
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+  document.head.appendChild(script);
+
+  trackAnalyticsPageView();
 }
 
 function updateSeoMetadata() {
@@ -636,3 +695,4 @@ try {
 }
 
 applyTranslations(initialLanguage);
+initGoogleAnalytics();

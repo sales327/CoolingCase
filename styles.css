@@ -481,6 +481,14 @@ main {
   text-wrap: balance;
 }
 
+.pricing-note {
+  margin: 0.55rem 0 0;
+  max-width: 24rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -906,7 +914,8 @@ textarea:focus {
   }
 
   .header-inner {
-    min-height: 4rem;
+    min-height: 3.8rem;
+    gap: 0.75rem;
   }
 
   .hero-shell,
@@ -918,16 +927,19 @@ textarea:focus {
   }
 
   .hero-copy h1 {
-    font-size: clamp(2.45rem, 14vw, 3.7rem);
+    max-width: 8.5ch;
+    font-size: clamp(2.15rem, 12vw, 3.15rem);
   }
 
   .hero-shell {
-    min-height: 39rem;
+    min-height: 33rem;
     align-items: flex-start;
-    padding-top: 1rem;
+    padding: 1rem;
   }
 
   .hero-backdrop {
+    grid-template-columns: minmax(0, 1fr) minmax(7rem, 9.5rem);
+    padding: 1rem;
     background-image:
       linear-gradient(180deg, rgba(244, 238, 228, 0.84) 0%, rgba(244, 238, 228, 0.74) 28%, rgba(244, 238, 228, 0.46) 52%, rgba(244, 238, 228, 0.2) 100%),
       linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(86, 58, 31, 0.14)),
@@ -939,16 +951,29 @@ textarea:focus {
     padding: 0;
   }
 
+  .hero-text {
+    max-width: 26rem;
+    font-size: 0.98rem;
+  }
+
+  .hero-points {
+    max-width: 25rem;
+  }
+
   .hero-meta {
     margin-bottom: 0.95rem;
   }
 
   .hero-origin {
+    font-size: 0.64rem;
+    letter-spacing: 0.12em;
     text-align: right;
   }
 
   .header-controls {
-    gap: 0.7rem;
+    margin-left: auto;
+    gap: 0.55rem;
+    flex-wrap: nowrap;
   }
 
   .hero-actions,
@@ -958,24 +983,34 @@ textarea:focus {
   }
 
   .header-summary {
-    width: 100%;
-    max-width: none;
-    text-align: center;
-    font-size: 0.74rem;
+    display: none;
   }
 
   .lang-switch {
-    width: 100%;
-    justify-content: center;
+    width: auto;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+
+  .lang-button {
+    min-height: 2rem;
+    padding: 0 0.72rem;
   }
 
   .button {
     width: 100%;
   }
 
-  .pricing-grid,
+  .pricing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .check-grid,
   .field-row {
     grid-template-columns: 1fr;
+  }
+
+  .price-card {
+    min-height: 6.75rem;
   }
 }
