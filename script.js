@@ -31,50 +31,47 @@ const LANGUAGE_KEY = "cooling-case-language";
 const PRIORITY_LIMIT = 3;
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 const SITE_URL = "https://cryomanta.com/";
+const ADS_CONVERSION_SEND_TO = "AW-17891805169/lQvpCLbz_ZgcEPGPvdNC";
+const ADS_CONVERSION_VALUE = 1.0;
+const ADS_CONVERSION_CURRENCY = "CHF";
 const mobileScrollMedia = window.matchMedia("(max-width: 720px)");
 const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOBILE_STAGE_DEFINITIONS = [
   {
-    sectionSelector: ".hero-section",
-    itemSelectors: [".hero-text", ".hero-points", ".hero-actions"],
-    revealStarts: [0.02, 0.72, 0.86],
-    revealLength: 0.12,
-    exitStarts: [0.66, 0.95, 0.97],
-    exitRanges: [0.1, 0.07, 0.07],
-    exitStart: 0.97,
-    exitRange: 0.07,
-  },
-  {
     sectionSelector: ".pricing-section",
-    itemSelectors: [".pricing-copy", ".price-card"],
+    itemSelectors: [".price-card"],
   },
   {
     sectionSelector: ".purpose-section",
-    itemSelectors: [".section-heading", ".info-card"],
+    itemSelectors: [".info-card"],
   },
   {
     sectionSelector: ".feedback-section",
-    itemSelectors: [".feedback-copy > .section-label", ".feedback-copy > h2", ".feedback-copy > .section-text", ".feedback-aside", ".form-shell"],
+    itemSelectors: [".feedback-aside", ".form-shell"],
+    revealStarts: [0.08, 0.2],
     exitStart: 0.9,
     exitRange: 0.12,
   },
   {
     sectionSelector: ".faq-section",
-    itemSelectors: [".faq-heading", ".faq-item"],
+    itemSelectors: [".faq-item"],
   },
   {
     sectionSelector: ".site-footer",
-    itemSelectors: [".footer-inner > div", ".legal-panel"],
+    itemSelectors: [".legal-panel"],
     exitStart: 0.92,
     exitRange: 0.1,
   },
 ];
+const heroSection = document.querySelector(".hero-section");
+const heroShell = heroSection?.querySelector(".hero-shell") || null;
 
 let currentLanguage = "en";
 let lastSubmissionHadEmail = null;
 let mobileScrollStages = [];
 let mobileScrollActive = false;
 let mobileScrollFrame = 0;
+let mobileHeroStageActive = false;
 
 const translations = {
   en: {
@@ -86,14 +83,15 @@ const translations = {
     navFeedback: "Feedback",
     navFaq: "FAQ",
     heroEyebrow: "Made in Switzerland",
-    heroStatus: 'Under development <span aria-hidden="true">&middot;</span> Planned release: end of 2026',
+    heroStatus:
+      '<span class="hero-status-state">Under development</span><span aria-hidden="true">&middot;</span><span class="hero-status-release">Planned release: end of 2026</span>',
     heroTitle: "Keep your phone cool in extreme heat.",
     heroText:
       "A premium cooling case concept for pilots, drone operators, field work, gaming, and other sun-exposed situations where heat, glare, throttling, and shutdown risk can interrupt the job.",
     heroPoint1: "Robust enough for harsh outdoor heat and sustained device load",
     heroPoint2: "Affordable enough to stay realistic for everyday field use",
     heroPoint3: "Impeccable in fit, feel and reliability under pressure",
-    heroCtaPrimary: "Join waitlist &amp; save <strong>CHF 15</strong>",
+    heroCtaPrimary: "Join waitlist &amp; save CHF 15>",
     heroCtaSecondary: "Give feedback",
     heroNote: "Concept only. Under development. Stay tuned, we keep you posted.",
     pricingLabel: "Indicative pricing",
@@ -226,7 +224,8 @@ const translations = {
     navFeedback: "Feedback",
     navFaq: "FAQ",
     heroEyebrow: "Hergestellt in der Schweiz",
-    heroStatus: 'In Entwicklung <span aria-hidden="true">&middot;</span> Geplante Freigabe: Ende 2026',
+    heroStatus:
+      '<span class="hero-status-state">In Entwicklung</span><span aria-hidden="true">&middot;</span><span class="hero-status-release">Geplante Freigabe: Ende 2026</span>',
     heroTitle: "Halte dein Handy kühl bei extremer Hitze.",
     heroText:
       "Ein hochwertiges Cooling-Case-Konzept für Piloten, Drohnenoperatoren, Ausseneinsätze, Gaming und andere sonnenexponierte Situationen, in denen Hitze, Blendung, Leistungsdrosselung und Abschaltrisiko stören.",
@@ -410,6 +409,18 @@ function getText(key) {
   return translations[currentLanguage][key];
 }
 
+function trackLeadFormConversion() {
+  if (typeof window.gtag !== "function") {
+    return;
+  }
+
+  window.gtag("event", "conversion", {
+    send_to: ADS_CONVERSION_SEND_TO,
+    value: ADS_CONVERSION_VALUE,
+    currency: ADS_CONVERSION_CURRENCY,
+  });
+}
+
 function updateSeoMetadata() {
   const title = getText("pageTitle");
   const description = getText("pageDescription");
@@ -551,6 +562,59 @@ function clampValue(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
 
+function setMobileHeroValues({
+  textOpacity = 1,
+  textShift = 0,
+  pointsOpacity = 1,
+  pointsShift = 0,
+  actionsOpacity = 1,
+  actionsShift = 0,
+} = {}) {
+  if (!heroSection) {
+    return;
+  }
+
+  heroSection.style.setProperty("--hero-text-opacity", String(textOpacity));
+  heroSection.style.setProperty("--hero-text-shift", `${textShift}px`);
+  heroSection.style.setProperty("--hero-points-opacity", String(pointsOpacity));
+  heroSection.style.setProperty("--hero-points-shift", `${pointsShift}px`);
+  heroSection.style.setProperty("--hero-actions-opacity", String(actionsOpacity));
+  heroSection.style.setProperty("--hero-actions-shift", `${actionsShift}px`);
+}
+
+function clearMobileHeroStage() {
+  mobileHeroStageActive = false;
+
+  if (!heroSection) {
+    return;
+  }
+
+  heroSection.classList.remove("mobile-hero-stage");
+  setMobileHeroValues();
+}
+
+function updateMobileHeroStage() {
+  if (!mobileHeroStageActive || !heroSection || !heroShell) {
+    return;
+  }
+
+  const sectionRect = heroSection.getBoundingClientRect();
+  const scrollRange = Math.max(heroSection.offsetHeight - heroShell.offsetHeight, 1);
+  const progress = clampValue(-sectionRect.top / scrollRange);
+  const textReveal = clampValue(progress / 0.14);
+  const pointsReveal = clampValue((progress - 0.08) / 0.16);
+  const actionsReveal = clampValue((progress - 0.18) / 0.18);
+
+  setMobileHeroValues({
+    textOpacity: textReveal.toFixed(3),
+    textShift: (42 * (1 - textReveal) - 12 * progress).toFixed(2),
+    pointsOpacity: pointsReveal.toFixed(3),
+    pointsShift: (54 * (1 - pointsReveal) - 16 * progress).toFixed(2),
+    actionsOpacity: actionsReveal.toFixed(3),
+    actionsShift: (72 * (1 - actionsReveal) - 10 * progress).toFixed(2),
+  });
+}
+
 function clearMobileScrollStages() {
   if (mobileScrollFrame) {
     window.cancelAnimationFrame(mobileScrollFrame);
@@ -667,13 +731,14 @@ function updateMobileScrollStages() {
 }
 
 function requestMobileScrollStageUpdate() {
-  if (!mobileScrollActive || mobileScrollFrame) {
+  if ((!mobileScrollActive && !mobileHeroStageActive) || mobileScrollFrame) {
     return;
   }
 
   mobileScrollFrame = window.requestAnimationFrame(() => {
     mobileScrollFrame = 0;
     updateMobileScrollStages();
+    updateMobileHeroStage();
   });
 }
 
@@ -682,11 +747,18 @@ function syncMobileScrollStages() {
 
   if (!shouldEnable) {
     clearMobileScrollStages();
+    clearMobileHeroStage();
     return;
+  }
+
+  if (heroSection && heroShell) {
+    heroSection.classList.add("mobile-hero-stage");
+    mobileHeroStageActive = true;
   }
 
   buildMobileScrollStages();
   updateMobileScrollStages();
+  updateMobileHeroStage();
 }
 
 async function submitWeb3FormData(formData) {
@@ -794,6 +866,7 @@ if (feedbackForm) {
 
     try {
       await submitWeb3FormData(formData);
+      trackLeadFormConversion();
 
       lastSubmissionHadEmail = email.length > 0;
       updateSuccessBody();
@@ -841,6 +914,7 @@ if (contactForm) {
 
     try {
       await submitWeb3FormData(formData);
+      trackLeadFormConversion();
 
       contactForm.hidden = true;
       contactSuccessCard.hidden = false;

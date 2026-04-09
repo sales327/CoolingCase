@@ -248,6 +248,9 @@ main {
 .hero-status-bar {
   align-self: start;
   justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   width: fit-content;
   margin: 0;
   padding: 0.45rem 0.72rem;
@@ -263,6 +266,11 @@ main {
 
 .hero-status-bar span[aria-hidden="true"] {
   opacity: 0.48;
+}
+
+.hero-status-state,
+.hero-status-release {
+  display: inline;
 }
 
 .hero-shell {
@@ -969,6 +977,10 @@ textarea:focus {
     padding-top: 0.15rem;
   }
 
+  .hero-section.mobile-hero-stage {
+    min-height: calc(23.9rem + 18rem);
+  }
+
   .hero-meta-bar {
     gap: 0.2rem 0.7rem;
     margin-bottom: 0.25rem;
@@ -1002,15 +1014,20 @@ textarea:focus {
     padding: 0.85rem;
   }
 
+  .hero-section.mobile-hero-stage .hero-shell {
+    position: sticky;
+    top: 4.15rem;
+  }
+
   .hero-backdrop {
     background-image: url("assets/hero-background-mobile.png");
-    background-position: center 52px;
+    background-position: center 5px;
   }
 
   .hero-backdrop::after {
     background:
-      radial-gradient(circle at 18% 10%, rgba(244, 238, 228, 0.52) 0%, rgba(244, 238, 228, 0.18) 20%, rgba(244, 238, 228, 0) 46%),
-      linear-gradient(180deg, rgba(244, 238, 228, 0.04) 0%, rgba(244, 238, 228, 0) 34%, rgba(244, 238, 228, 0.08) 70%, rgba(244, 238, 228, 0.36) 100%);
+      radial-gradient(circle at 18% 10%, rgba(244, 238, 228, 0.34) 0%, rgba(244, 238, 228, 0.12) 18%, rgba(244, 238, 228, 0) 42%),
+      linear-gradient(180deg, rgba(244, 238, 228, 0.02) 0%, rgba(244, 238, 228, 0) 30%, rgba(244, 238, 228, 0.08) 70%, rgba(244, 238, 228, 0.36) 100%);
   }
 
   .hero-copy {
@@ -1045,7 +1062,7 @@ textarea:focus {
     position: absolute;
     left: 1rem;
     right: 1rem;
-    bottom: 1rem;
+    bottom: 11.8rem;
     z-index: 1;
     max-width: none;
     margin: 0;
@@ -1059,7 +1076,7 @@ textarea:focus {
     position: absolute;
     left: 0.95rem;
     right: 0.95rem;
-    bottom: 4.75rem;
+    bottom: 7.95rem;
     z-index: 1;
     max-width: none;
     gap: 0.3rem;
@@ -1080,6 +1097,9 @@ textarea:focus {
   }
 
   .hero-status-bar {
+    display: grid;
+    align-items: start;
+    gap: 0.08rem;
     width: auto;
     padding: 0;
     border: 0;
@@ -1089,6 +1109,21 @@ textarea:focus {
     font-size: 0.74rem;
     line-height: 1.18;
     white-space: normal;
+  }
+
+  .hero-status-bar span[aria-hidden="true"] {
+    display: none;
+  }
+
+  .hero-status-state,
+  .hero-status-release {
+    display: block;
+  }
+
+  .hero-status-release {
+    font-size: 0.68rem;
+    line-height: 1.18;
+    color: rgba(86, 94, 103, 0.9);
   }
 
   .hero-origin {
@@ -1119,6 +1154,28 @@ textarea:focus {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.55rem;
+  }
+
+  .hero-section.mobile-hero-stage .hero-text,
+  .hero-section.mobile-hero-stage .hero-points,
+  .hero-section.mobile-hero-stage .hero-actions {
+    will-change: transform, opacity;
+    transition: opacity 140ms linear, transform 140ms linear;
+  }
+
+  .hero-section.mobile-hero-stage .hero-text {
+    opacity: var(--hero-text-opacity, 0);
+    transform: translate3d(0, var(--hero-text-shift, 58px), 0);
+  }
+
+  .hero-section.mobile-hero-stage .hero-points {
+    opacity: var(--hero-points-opacity, 0);
+    transform: translate3d(0, var(--hero-points-shift, 72px), 0);
+  }
+
+  .hero-section.mobile-hero-stage .hero-actions {
+    opacity: var(--hero-actions-opacity, 0);
+    transform: translate3d(0, var(--hero-actions-shift, 96px), 0);
   }
 
   .header-summary {
