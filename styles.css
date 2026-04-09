@@ -975,6 +975,10 @@ textarea:focus {
     width: 100%;
   }
 
+  body.hero-lock-active .hero-section {
+    touch-action: none;
+  }
+
   main {
     padding-top: 0.35rem;
     padding-bottom: 3.25rem;
@@ -1080,7 +1084,7 @@ textarea:focus {
     position: absolute;
     left: 1rem;
     right: 1rem;
-    top: 52%;
+    top: 56%;
     bottom: 0.95rem;
     display: block;
     width: auto;
@@ -1093,7 +1097,7 @@ textarea:focus {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 8.6rem;
+    bottom: 0;
     z-index: 1;
     max-width: none;
     margin: 0;
@@ -1107,7 +1111,7 @@ textarea:focus {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 4.8rem;
+    bottom: 0;
     z-index: 1;
     max-width: none;
     gap: 0.3rem;
@@ -1214,6 +1218,8 @@ textarea:focus {
     transition: opacity 220ms linear, transform 220ms linear;
   }
 
+  html.hero-lock-active .pricing-copy > *,
+  html.hero-lock-active .price-card,
   body.hero-lock-active .pricing-copy > *,
   body.hero-lock-active .price-card {
     opacity: 0;

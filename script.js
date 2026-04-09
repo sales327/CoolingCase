@@ -34,7 +34,7 @@ const SITE_URL = "https://cryomanta.com/";
 const ADS_CONVERSION_SEND_TO = "AW-17891805169/lQvpCLbz_ZgcEPGPvdNC";
 const ADS_CONVERSION_VALUE = 1.0;
 const ADS_CONVERSION_CURRENCY = "CHF";
-const MOBILE_HERO_SEQUENCE_DISTANCE = 520;
+const MOBILE_HERO_SEQUENCE_DISTANCE = 260;
 const mobileScrollMedia = window.matchMedia("(max-width: 720px)");
 const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOBILE_STAGE_DEFINITIONS = [
@@ -75,6 +75,7 @@ let mobileScrollFrame = 0;
 let mobileHeroStageActive = false;
 let mobileHeroSequenceProgress = 0;
 let mobileHeroTouchY = null;
+let mobileHeroPointerY = null;
 
 const translations = {
   en: {
@@ -535,7 +536,7 @@ function updateWaitlistState() {
 
   const hasEmail = emailInput.value.trim().length > 0;
   waitlistPanel.hidden = !hasEmail;
-  consentInput.required = hasEmail;
+  consentInput.required = false;
 
   if (!hasEmail) {
     consentInput.checked = false;
@@ -638,8 +639,8 @@ function updateMobileHeroStage() {
   };
 
   const textStage = getStageValues(0.02, 0.22, 0.34, 0.5, 42, -26);
-  const pointsStage = getStageValues(0.34, 0.54, 0.66, 0.82, 48, -30);
-  const actionsStage = getStageValues(0.66, 0.86, 1.02, 1.08, 54, 0);
+  const pointsStage = getStageValues(0.36, 0.56, 0.68, 0.84, 48, -30);
+  const actionsStage = getStageValues(0.7, 0.9, 1.02, 1.08, 54, 0);
 
   setMobileHeroValues({
     textOpacity: textStage.opacity.toFixed(3),
@@ -720,6 +721,35 @@ function handleMobileHeroTouchMove(event) {
 
 function handleMobileHeroTouchEnd() {
   mobileHeroTouchY = null;
+}
+
+function handleMobileHeroPointerDown(event) {
+  if (!mobileHeroStageActive || event.pointerType !== "touch") {
+    return;
+  }
+
+  mobileHeroPointerY = event.clientY;
+}
+
+function handleMobileHeroPointerMove(event) {
+  if (!mobileHeroStageActive || event.pointerType !== "touch" || mobileHeroPointerY === null) {
+    return;
+  }
+
+  const deltaY = mobileHeroPointerY - event.clientY;
+  mobileHeroPointerY = event.clientY;
+
+  if (Math.abs(deltaY) < 0.5) {
+    return;
+  }
+
+  if (updateMobileHeroSequenceFromDelta(deltaY)) {
+    event.preventDefault();
+  }
+}
+
+function handleMobileHeroPointerEnd() {
+  mobileHeroPointerY = null;
 }
 
 function clearMobileScrollStages() {
@@ -865,6 +895,8 @@ function syncMobileScrollStages() {
   if (heroSection && heroShell) {
     heroSection.classList.add("mobile-hero-stage");
     mobileHeroStageActive = true;
+    document.documentElement.classList.toggle("hero-lock-active", mobileHeroSequenceProgress < 1);
+    document.body.classList.toggle("hero-lock-active", mobileHeroSequenceProgress < 1);
   }
 
   buildMobileScrollStages();
@@ -1061,6 +1093,10 @@ window.addEventListener("touchstart", handleMobileHeroTouchStart, { passive: tru
 window.addEventListener("touchmove", handleMobileHeroTouchMove, { passive: false });
 window.addEventListener("touchend", handleMobileHeroTouchEnd, { passive: true });
 window.addEventListener("touchcancel", handleMobileHeroTouchEnd, { passive: true });
+window.addEventListener("pointerdown", handleMobileHeroPointerDown, { passive: true });
+window.addEventListener("pointermove", handleMobileHeroPointerMove, { passive: false });
+window.addEventListener("pointerup", handleMobileHeroPointerEnd, { passive: true });
+window.addEventListener("pointercancel", handleMobileHeroPointerEnd, { passive: true });
 
 if (typeof mobileScrollMedia.addEventListener === "function") {
   mobileScrollMedia.addEventListener("change", syncMobileScrollStages);

@@ -329,7 +329,7 @@
             <div class="field-row">
               <div class="field-group">
                 <label for="use-case" data-i18n="useCaseLabel">Main use case</label>
-                <select id="use-case" name="useCase" required>
+                <select id="use-case" name="useCase">
                   <option value="" data-i18n="selectOne">Select one</option>
                   <option value="aviation" data-i18n="useAviation">Aviation</option>
                   <option value="drone operations" data-i18n="useDrone">Drone operations</option>
@@ -341,7 +341,7 @@
 
               <div class="field-group">
                 <label for="device-type" data-i18n="deviceTypeLabel">Device type</label>
-                <select id="device-type" name="deviceType" required>
+                <select id="device-type" name="deviceType">
                   <option value="" data-i18n="selectOne">Select one</option>
                   <option value="iPhone" data-i18n="deviceIphone">iPhone</option>
                   <option value="Android phone" data-i18n="deviceAndroidPhone">Android phone</option>
@@ -355,7 +355,7 @@
 
             <div class="field-group">
               <label for="remove-after-use" data-i18n="removeAfterLabel">Will you remove the cooling case after every usage?</label>
-              <select id="remove-after-use" name="removeAfterUse" required>
+              <select id="remove-after-use" name="removeAfterUse">
                 <option value="" data-i18n="selectOne">Select one</option>
                 <option value="yes" data-i18n="removeYes">Yes</option>
                 <option value="no" data-i18n="removeNo">No</option>
@@ -385,7 +385,6 @@
                 id="problem"
                 name="problem"
                 rows="6"
-                required
                 placeholder="Tell us what happens today, why it matters, and what would improve your use case."
                 data-i18n-placeholder="problemPlaceholder"
               ></textarea>
