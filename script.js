@@ -34,12 +34,13 @@ const SITE_URL = "https://cryomanta.com/";
 const ADS_CONVERSION_SEND_TO = "AW-17891805169/lQvpCLbz_ZgcEPGPvdNC";
 const ADS_CONVERSION_VALUE = 1.0;
 const ADS_CONVERSION_CURRENCY = "CHF";
+const MOBILE_HERO_SEQUENCE_DISTANCE = 520;
 const mobileScrollMedia = window.matchMedia("(max-width: 720px)");
 const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOBILE_STAGE_DEFINITIONS = [
   {
     sectionSelector: ".pricing-section",
-    itemSelectors: [".price-card"],
+    itemSelectors: [".pricing-copy > *", ".price-card"],
   },
   {
     sectionSelector: ".purpose-section",
@@ -72,6 +73,8 @@ let mobileScrollStages = [];
 let mobileScrollActive = false;
 let mobileScrollFrame = 0;
 let mobileHeroStageActive = false;
+let mobileHeroSequenceProgress = 0;
+let mobileHeroTouchY = null;
 
 const translations = {
   en: {
@@ -584,6 +587,10 @@ function setMobileHeroValues({
 
 function clearMobileHeroStage() {
   mobileHeroStageActive = false;
+  mobileHeroSequenceProgress = 0;
+  mobileHeroTouchY = null;
+  document.documentElement.classList.remove("hero-lock-active");
+  document.body.classList.remove("hero-lock-active");
 
   if (!heroSection) {
     return;
@@ -598,21 +605,121 @@ function updateMobileHeroStage() {
     return;
   }
 
-  const sectionRect = heroSection.getBoundingClientRect();
-  const scrollRange = Math.max(heroSection.offsetHeight - heroShell.offsetHeight, 1);
-  const progress = clampValue(-sectionRect.top / scrollRange);
-  const textReveal = clampValue(progress / 0.14);
-  const pointsReveal = clampValue((progress - 0.08) / 0.16);
-  const actionsReveal = clampValue((progress - 0.18) / 0.18);
+  const progress = mobileHeroSequenceProgress;
+  document.documentElement.classList.toggle("hero-lock-active", progress < 1);
+  document.body.classList.toggle("hero-lock-active", progress < 1);
+
+  const getStageValues = (start, enterEnd, holdEnd, exitEnd, enterShift, exitShift) => {
+    if (progress <= start) {
+      return { opacity: 0, shift: enterShift };
+    }
+
+    if (progress <= enterEnd) {
+      const t = clampValue((progress - start) / Math.max(enterEnd - start, 0.001));
+      return {
+        opacity: t,
+        shift: enterShift * (1 - t),
+      };
+    }
+
+    if (progress <= holdEnd) {
+      return { opacity: 1, shift: 0 };
+    }
+
+    if (progress <= exitEnd) {
+      const t = clampValue((progress - holdEnd) / Math.max(exitEnd - holdEnd, 0.001));
+      return {
+        opacity: 1 - t,
+        shift: exitShift * t,
+      };
+    }
+
+    return { opacity: 0, shift: exitShift };
+  };
+
+  const textStage = getStageValues(0.02, 0.22, 0.34, 0.5, 42, -26);
+  const pointsStage = getStageValues(0.34, 0.54, 0.66, 0.82, 48, -30);
+  const actionsStage = getStageValues(0.66, 0.86, 1.02, 1.08, 54, 0);
 
   setMobileHeroValues({
-    textOpacity: textReveal.toFixed(3),
-    textShift: (42 * (1 - textReveal) - 12 * progress).toFixed(2),
-    pointsOpacity: pointsReveal.toFixed(3),
-    pointsShift: (54 * (1 - pointsReveal) - 16 * progress).toFixed(2),
-    actionsOpacity: actionsReveal.toFixed(3),
-    actionsShift: (72 * (1 - actionsReveal) - 10 * progress).toFixed(2),
+    textOpacity: textStage.opacity.toFixed(3),
+    textShift: textStage.shift.toFixed(2),
+    pointsOpacity: pointsStage.opacity.toFixed(3),
+    pointsShift: pointsStage.shift.toFixed(2),
+    actionsOpacity: actionsStage.opacity.toFixed(3),
+    actionsShift: actionsStage.shift.toFixed(2),
   });
+}
+
+function updateMobileHeroSequenceFromDelta(deltaY) {
+  if (!mobileHeroStageActive || !heroSection) {
+    return false;
+  }
+
+  const atTop = window.scrollY <= 6;
+  const canAdvance = deltaY > 0 && atTop && mobileHeroSequenceProgress < 1;
+  const canReverse = deltaY < 0 && atTop && mobileHeroSequenceProgress > 0;
+
+  if (!canAdvance && !canReverse) {
+    return false;
+  }
+
+  const nextProgress = clampValue(
+    mobileHeroSequenceProgress + deltaY / MOBILE_HERO_SEQUENCE_DISTANCE,
+  );
+
+  if (nextProgress === mobileHeroSequenceProgress) {
+    if (atTop) {
+      window.scrollTo(0, 0);
+    }
+
+    return canAdvance || canReverse;
+  }
+
+  mobileHeroSequenceProgress = nextProgress;
+  updateMobileHeroStage();
+  window.scrollTo(0, 0);
+  return true;
+}
+
+function handleMobileHeroWheel(event) {
+  if (!mobileHeroStageActive) {
+    return;
+  }
+
+  if (updateMobileHeroSequenceFromDelta(event.deltaY)) {
+    event.preventDefault();
+  }
+}
+
+function handleMobileHeroTouchStart(event) {
+  if (!mobileHeroStageActive || event.touches.length !== 1) {
+    return;
+  }
+
+  mobileHeroTouchY = event.touches[0].clientY;
+}
+
+function handleMobileHeroTouchMove(event) {
+  if (!mobileHeroStageActive || event.touches.length !== 1 || mobileHeroTouchY === null) {
+    return;
+  }
+
+  const currentY = event.touches[0].clientY;
+  const deltaY = mobileHeroTouchY - currentY;
+  mobileHeroTouchY = currentY;
+
+  if (Math.abs(deltaY) < 0.5) {
+    return;
+  }
+
+  if (updateMobileHeroSequenceFromDelta(deltaY)) {
+    event.preventDefault();
+  }
+}
+
+function handleMobileHeroTouchEnd() {
+  mobileHeroTouchY = null;
 }
 
 function clearMobileScrollStages() {
@@ -731,6 +838,10 @@ function updateMobileScrollStages() {
 }
 
 function requestMobileScrollStageUpdate() {
+  if (mobileHeroStageActive && mobileHeroSequenceProgress < 1 && window.scrollY > 0) {
+    window.scrollTo(0, 0);
+  }
+
   if ((!mobileScrollActive && !mobileHeroStageActive) || mobileScrollFrame) {
     return;
   }
@@ -945,6 +1056,11 @@ if (contactResetFormButton) {
 
 window.addEventListener("scroll", requestMobileScrollStageUpdate, { passive: true });
 window.addEventListener("resize", syncMobileScrollStages);
+window.addEventListener("wheel", handleMobileHeroWheel, { passive: false });
+window.addEventListener("touchstart", handleMobileHeroTouchStart, { passive: true });
+window.addEventListener("touchmove", handleMobileHeroTouchMove, { passive: false });
+window.addEventListener("touchend", handleMobileHeroTouchEnd, { passive: true });
+window.addEventListener("touchcancel", handleMobileHeroTouchEnd, { passive: true });
 
 if (typeof mobileScrollMedia.addEventListener === "function") {
   mobileScrollMedia.addEventListener("change", syncMobileScrollStages);
