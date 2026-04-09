@@ -33,10 +33,47 @@ const PRIORITY_LIMIT = 3;
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 const GA_MEASUREMENT_ID_PATTERN = /^G-[A-Z0-9]+$/i;
 const SITE_URL = "https://cryomanta.com/";
+const mobileScrollMedia = window.matchMedia("(max-width: 720px)");
+const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
+const MOBILE_STAGE_DEFINITIONS = [
+  {
+    sectionSelector: ".hero-section",
+    itemSelectors: [".hero-meta-bar", ".hero-copy h1", ".hero-text", ".hero-points", ".hero-actions", ".hero-note"],
+    exitStart: 0.84,
+    exitRange: 0.18,
+  },
+  {
+    sectionSelector: ".pricing-section",
+    itemSelectors: [".pricing-copy", ".price-card"],
+  },
+  {
+    sectionSelector: ".purpose-section",
+    itemSelectors: [".section-heading", ".info-card"],
+  },
+  {
+    sectionSelector: ".feedback-section",
+    itemSelectors: [".feedback-copy > .section-label", ".feedback-copy > h2", ".feedback-copy > .section-text", ".feedback-aside", ".form-shell"],
+    exitStart: 0.9,
+    exitRange: 0.12,
+  },
+  {
+    sectionSelector: ".faq-section",
+    itemSelectors: [".faq-heading", ".faq-item"],
+  },
+  {
+    sectionSelector: ".site-footer",
+    itemSelectors: [".footer-inner > div", ".legal-panel"],
+    exitStart: 0.92,
+    exitRange: 0.1,
+  },
+];
 
 let currentLanguage = "en";
 let lastSubmissionHadEmail = null;
 let googleAnalyticsInitialized = false;
+let mobileScrollStages = [];
+let mobileScrollActive = false;
+let mobileScrollFrame = 0;
 
 const translations = {
   en: {
@@ -61,10 +98,10 @@ const translations = {
     pricingLabel: "Indicative pricing",
     pricingTitle: "Reference pricing for the first production batch.",
     pricingNote: "Non-binding concept prices. Final pricing may change.",
-    pricePhones: "Phones",
-    priceTablets: "Tablets",
-    priceRuggedPhones: "Rugged phones",
-    priceRuggedTablets: "Rugged tablets",
+    pricePhones: "Smartphone | Standard",
+    priceTablets: "Tablet | Standard",
+    priceRuggedPhones: "Smartphone | Armored",
+    priceRuggedTablets: "Tablet | Armored",
     developmentLabel: "Under development",
     developmentTitle: "Stay tuned. We keep you posted.",
     developmentText:
@@ -200,10 +237,10 @@ const translations = {
     heroNote: "Nur Konzept. In Entwicklung. Aktuell nicht im Verkauf.",
     pricingLabel: "Richtpreise",
     pricingTitle: "Referenzpreise für die erste Produktionscharge.",
-    pricePhones: "Handys",
-    priceTablets: "Tablets",
-    priceRuggedPhones: "Rugged-Handys",
-    priceRuggedTablets: "Rugged-Tablets",
+    pricePhones: "Smartphone | Standard",
+    priceTablets: "Tablet | Standard",
+    priceRuggedPhones: "Smartphone | Gepanzert",
+    priceRuggedTablets: "Tablet | Gepanzert",
     developmentLabel: "In Entwicklung",
     developmentTitle: "Entwicklung vor der Produktion.",
     developmentText:
@@ -518,6 +555,7 @@ function applyTranslations(language) {
 
   updateSuccessBody();
   validatePriorityLimit();
+  requestMobileScrollStageUpdate();
 
   try {
     window.localStorage.setItem(LANGUAGE_KEY, currentLanguage);
@@ -539,6 +577,8 @@ function updateWaitlistState() {
     consentInput.checked = false;
     consentInput.setCustomValidity("");
   }
+
+  requestMobileScrollStageUpdate();
 }
 
 function validatePriorityLimit() {
@@ -555,6 +595,126 @@ function validatePriorityLimit() {
   }
 
   return isValid;
+}
+
+function clampValue(value, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function clearMobileScrollStages() {
+  if (mobileScrollFrame) {
+    window.cancelAnimationFrame(mobileScrollFrame);
+    mobileScrollFrame = 0;
+  }
+
+  mobileScrollStages.forEach(({ section, items }) => {
+    section.classList.remove("mobile-scroll-stage");
+
+    items.forEach((item) => {
+      item.classList.remove("mobile-scroll-item");
+      item.style.removeProperty("--item-opacity");
+      item.style.removeProperty("--item-shift");
+      item.style.removeProperty("--item-blur");
+    });
+  });
+
+  mobileScrollStages = [];
+  mobileScrollActive = false;
+}
+
+function buildMobileScrollStages() {
+  clearMobileScrollStages();
+
+  MOBILE_STAGE_DEFINITIONS.forEach(({ sectionSelector, itemSelectors, exitStart, exitRange }) => {
+    const section = document.querySelector(sectionSelector);
+
+    if (!section) {
+      return;
+    }
+
+    const seenItems = new Set();
+    const items = [];
+
+    itemSelectors.forEach((selector) => {
+      section.querySelectorAll(selector).forEach((element) => {
+        if (!seenItems.has(element)) {
+          seenItems.add(element);
+          items.push(element);
+        }
+      });
+    });
+
+    if (!items.length) {
+      return;
+    }
+
+    section.classList.add("mobile-scroll-stage");
+
+    items.forEach((item) => {
+      item.classList.add("mobile-scroll-item");
+    });
+
+    mobileScrollStages.push({
+      section,
+      items,
+      exitStart: typeof exitStart === "number" ? exitStart : 0.86,
+      exitRange: typeof exitRange === "number" ? exitRange : 0.16,
+    });
+  });
+
+  mobileScrollActive = mobileScrollStages.length > 0;
+}
+
+function updateMobileScrollStages() {
+  if (!mobileScrollActive) {
+    return;
+  }
+
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+
+  mobileScrollStages.forEach(({ section, items, exitStart, exitRange }) => {
+    const rect = section.getBoundingClientRect();
+    const sectionHeight = Math.max(rect.height, 1);
+    const progress = clampValue((viewportHeight - rect.top) / (viewportHeight + sectionHeight));
+    const step = items.length > 1 ? 0.46 / (items.length - 1) : 0;
+
+    items.forEach((item, index) => {
+      const revealStart = 0.05 + index * step;
+      const revealEnd = Math.min(revealStart + 0.18, exitStart - 0.05);
+      const reveal = clampValue((progress - revealStart) / Math.max(revealEnd - revealStart, 0.001));
+      const exit = clampValue((progress - (exitStart + index * 0.01)) / exitRange);
+      const opacity = clampValue(reveal * (1 - exit));
+      const shift = exit > 0 ? -18 * exit : 22 * (1 - reveal);
+      const blur = opacity >= 0.98 ? 0 : (1 - opacity) * 8;
+
+      item.style.setProperty("--item-opacity", opacity.toFixed(3));
+      item.style.setProperty("--item-shift", `${shift.toFixed(2)}px`);
+      item.style.setProperty("--item-blur", `${blur.toFixed(2)}px`);
+    });
+  });
+}
+
+function requestMobileScrollStageUpdate() {
+  if (!mobileScrollActive || mobileScrollFrame) {
+    return;
+  }
+
+  mobileScrollFrame = window.requestAnimationFrame(() => {
+    mobileScrollFrame = 0;
+    updateMobileScrollStages();
+  });
+}
+
+function syncMobileScrollStages() {
+  const shouldEnable = mobileScrollMedia.matches && !reducedMotionMedia.matches;
+
+  if (!shouldEnable) {
+    clearMobileScrollStages();
+    return;
+  }
+
+  buildMobileScrollStages();
+  updateMobileScrollStages();
 }
 
 async function submitWeb3FormData(formData) {
@@ -592,6 +752,7 @@ function resetPrototypeForm() {
   updateWaitlistState();
   validatePriorityLimit();
   updateSuccessBody();
+  requestMobileScrollStageUpdate();
 
   if (emailInput) {
     emailInput.focus();
@@ -616,6 +777,8 @@ function resetContactForm() {
   if (contactEmailInput) {
     contactEmailInput.focus();
   }
+
+  requestMobileScrollStageUpdate();
 }
 
 if (emailInput) {
@@ -668,6 +831,7 @@ if (feedbackForm) {
       feedbackForm.reset();
       updateWaitlistState();
       validatePriorityLimit();
+      requestMobileScrollStageUpdate();
     } catch (error) {
       if (formError) {
         formError.textContent = getText("formError");
@@ -710,6 +874,7 @@ if (contactForm) {
       contactSuccessCard.hidden = false;
       contactSuccessCard.focus();
       contactForm.reset();
+      requestMobileScrollStageUpdate();
     } catch (error) {
       if (contactFormError) {
         contactFormError.textContent = getText("contactError");
@@ -732,6 +897,25 @@ if (contactResetFormButton) {
   contactResetFormButton.addEventListener("click", resetContactForm);
 }
 
+window.addEventListener("scroll", requestMobileScrollStageUpdate, { passive: true });
+window.addEventListener("resize", syncMobileScrollStages);
+
+if (typeof mobileScrollMedia.addEventListener === "function") {
+  mobileScrollMedia.addEventListener("change", syncMobileScrollStages);
+} else if (typeof mobileScrollMedia.addListener === "function") {
+  mobileScrollMedia.addListener(syncMobileScrollStages);
+}
+
+if (typeof reducedMotionMedia.addEventListener === "function") {
+  reducedMotionMedia.addEventListener("change", syncMobileScrollStages);
+} else if (typeof reducedMotionMedia.addListener === "function") {
+  reducedMotionMedia.addListener(syncMobileScrollStages);
+}
+
+document.querySelectorAll(".faq-item, .legal-panel").forEach((element) => {
+  element.addEventListener("toggle", requestMobileScrollStageUpdate);
+});
+
 let initialLanguage = "en";
 
 try {
@@ -750,3 +934,4 @@ try {
 
 applyTranslations(initialLanguage);
 initGoogleAnalytics();
+syncMobileScrollStages();
