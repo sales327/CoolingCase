@@ -26,21 +26,23 @@ const ogUrl = document.getElementById("og-url");
 const ogLocale = document.getElementById("og-locale");
 const twitterTitle = document.getElementById("twitter-title");
 const twitterDescription = document.getElementById("twitter-description");
-const gaMeasurementIdMeta = document.getElementById("ga-measurement-id");
 
 const LANGUAGE_KEY = "cooling-case-language";
 const PRIORITY_LIMIT = 3;
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
-const GA_MEASUREMENT_ID_PATTERN = /^G-[A-Z0-9]+$/i;
 const SITE_URL = "https://cryomanta.com/";
 const mobileScrollMedia = window.matchMedia("(max-width: 720px)");
 const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOBILE_STAGE_DEFINITIONS = [
   {
     sectionSelector: ".hero-section",
-    itemSelectors: [".hero-meta-bar", ".hero-copy h1", ".hero-text", ".hero-points", ".hero-actions", ".hero-note"],
-    exitStart: 0.84,
-    exitRange: 0.18,
+    itemSelectors: [".hero-text", ".hero-points", ".hero-actions"],
+    revealStarts: [0.02, 0.72, 0.86],
+    revealLength: 0.12,
+    exitStarts: [0.66, 0.95, 0.97],
+    exitRanges: [0.1, 0.07, 0.07],
+    exitStart: 0.97,
+    exitRange: 0.07,
   },
   {
     sectionSelector: ".pricing-section",
@@ -70,7 +72,6 @@ const MOBILE_STAGE_DEFINITIONS = [
 
 let currentLanguage = "en";
 let lastSubmissionHadEmail = null;
-let googleAnalyticsInitialized = false;
 let mobileScrollStages = [];
 let mobileScrollActive = false;
 let mobileScrollFrame = 0;
@@ -92,7 +93,7 @@ const translations = {
     heroPoint1: "Robust enough for harsh outdoor heat and sustained device load",
     heroPoint2: "Affordable enough to stay realistic for everyday field use",
     heroPoint3: "Impeccable in fit, feel and reliability under pressure",
-    heroCtaPrimary: "Join waitlist - <strong>CHF 15</strong> off",
+    heroCtaPrimary: "Join waitlist &amp; save <strong>CHF 15</strong>",
     heroCtaSecondary: "Give feedback",
     heroNote: "Concept only. Under development. Stay tuned, we keep you posted.",
     pricingLabel: "Indicative pricing",
@@ -232,7 +233,7 @@ const translations = {
     heroPoint1: "Robust genug für grosse Hitze im Freien und dauerhafte Gerätelast",
     heroPoint2: "Erschwinglich genug für reale Einsätze im Alltag und im Feld",
     heroPoint3: "Makellos in Passform, Haptik und Zuverlässigkeit unter Belastung",
-    heroCtaPrimary: "Warteliste - <strong>CHF 15</strong> Rabatt",
+    heroCtaPrimary: "Warteliste &amp; <strong>CHF 15</strong> sparen",
     heroCtaSecondary: "Feedback geben",
     heroNote: "Nur Konzept. In Entwicklung. Aktuell nicht im Verkauf.",
     pricingLabel: "Richtpreise",
@@ -357,6 +358,8 @@ translations.de.pageDescription =
   "Cryomanta ist ein Schweizer Cooling-Case-Konzept f\u00FCr Smartphones und Tablets bei extremer Hitze, Blendung, Drosselung und Abschaltrisiko im Ausseneinsatz.";
 translations.de.pricingNote =
   "Unverbindliche Konzeptpreise. Endg\u00FCltige Preise k\u00F6nnen sich \u00E4ndern.";
+translations.de.heroTitle =
+  "Handy k\u00FChl bei extremer Hitze.";
 translations.de.heroNote =
   "Nur Konzept. In Entwicklung. Bleib dran, wir halten dich auf dem Laufenden.";
 translations.de.developmentTitle =
@@ -405,59 +408,6 @@ translations.de.footerNote =
 
 function getText(key) {
   return translations[currentLanguage][key];
-}
-
-function trackAnalyticsPageView() {
-  if (typeof window.gtag !== "function") {
-    return;
-  }
-
-  window.gtag("event", "page_view", {
-    page_title: document.title,
-    page_location: window.location.href.split("#")[0],
-    language: document.documentElement.lang,
-  });
-}
-
-function initGoogleAnalytics() {
-  if (googleAnalyticsInitialized) {
-    return;
-  }
-
-  const measurementId = gaMeasurementIdMeta?.getAttribute("content")?.trim() || "";
-
-  if (!GA_MEASUREMENT_ID_PATTERN.test(measurementId)) {
-    return;
-  }
-
-  googleAnalyticsInitialized = true;
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag() {
-    window.dataLayer.push(arguments);
-  };
-
-  window.gtag("consent", "default", {
-    analytics_storage: "denied",
-    ad_storage: "denied",
-    ad_user_data: "denied",
-    ad_personalization: "denied",
-    functionality_storage: "granted",
-    security_storage: "granted",
-  });
-
-  window.gtag("js", new Date());
-  window.gtag("config", measurementId, {
-    send_page_view: false,
-    allow_google_signals: false,
-    allow_ad_personalization_signals: false,
-  });
-
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
-  document.head.appendChild(script);
-
-  trackAnalyticsPageView();
 }
 
 function updateSeoMetadata() {
@@ -614,7 +564,6 @@ function clearMobileScrollStages() {
       item.classList.remove("mobile-scroll-item");
       item.style.removeProperty("--item-opacity");
       item.style.removeProperty("--item-shift");
-      item.style.removeProperty("--item-blur");
     });
   });
 
@@ -625,7 +574,17 @@ function clearMobileScrollStages() {
 function buildMobileScrollStages() {
   clearMobileScrollStages();
 
-  MOBILE_STAGE_DEFINITIONS.forEach(({ sectionSelector, itemSelectors, exitStart, exitRange }) => {
+  MOBILE_STAGE_DEFINITIONS.forEach(
+    ({
+      sectionSelector,
+      itemSelectors,
+      revealStarts,
+      revealLength,
+      exitStarts,
+      exitRanges,
+      exitStart,
+      exitRange,
+    }) => {
     const section = document.querySelector(sectionSelector);
 
     if (!section) {
@@ -657,10 +616,15 @@ function buildMobileScrollStages() {
     mobileScrollStages.push({
       section,
       items,
+      revealStarts: Array.isArray(revealStarts) ? revealStarts : null,
+      revealLength: typeof revealLength === "number" ? revealLength : 0.18,
+      exitStarts: Array.isArray(exitStarts) ? exitStarts : null,
+      exitRanges: Array.isArray(exitRanges) ? exitRanges : null,
       exitStart: typeof exitStart === "number" ? exitStart : 0.86,
       exitRange: typeof exitRange === "number" ? exitRange : 0.16,
     });
-  });
+    },
+  );
 
   mobileScrollActive = mobileScrollStages.length > 0;
 }
@@ -672,24 +636,32 @@ function updateMobileScrollStages() {
 
   const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
 
-  mobileScrollStages.forEach(({ section, items, exitStart, exitRange }) => {
+  mobileScrollStages.forEach(({ section, items, revealStarts, revealLength, exitStarts, exitRanges, exitStart, exitRange }) => {
     const rect = section.getBoundingClientRect();
     const sectionHeight = Math.max(rect.height, 1);
     const progress = clampValue((viewportHeight - rect.top) / (viewportHeight + sectionHeight));
     const step = items.length > 1 ? 0.46 / (items.length - 1) : 0;
 
     items.forEach((item, index) => {
-      const revealStart = 0.05 + index * step;
-      const revealEnd = Math.min(revealStart + 0.18, exitStart - 0.05);
+      const revealStart = Array.isArray(revealStarts) && typeof revealStarts[index] === "number"
+        ? revealStarts[index]
+        : 0.05 + index * step;
+      const revealEnd = Math.min(revealStart + revealLength, exitStart - 0.05);
       const reveal = clampValue((progress - revealStart) / Math.max(revealEnd - revealStart, 0.001));
-      const exit = clampValue((progress - (exitStart + index * 0.01)) / exitRange);
+      const itemExitStart =
+        Array.isArray(exitStarts) && typeof exitStarts[index] === "number"
+          ? exitStarts[index]
+          : exitStart + index * 0.01;
+      const itemExitRange =
+        Array.isArray(exitRanges) && typeof exitRanges[index] === "number"
+          ? exitRanges[index]
+          : exitRange;
+      const exit = clampValue((progress - itemExitStart) / itemExitRange);
       const opacity = clampValue(reveal * (1 - exit));
       const shift = exit > 0 ? -18 * exit : 22 * (1 - reveal);
-      const blur = opacity >= 0.98 ? 0 : (1 - opacity) * 8;
 
       item.style.setProperty("--item-opacity", opacity.toFixed(3));
       item.style.setProperty("--item-shift", `${shift.toFixed(2)}px`);
-      item.style.setProperty("--item-blur", `${blur.toFixed(2)}px`);
     });
   });
 }
@@ -933,5 +905,4 @@ try {
 }
 
 applyTranslations(initialLanguage);
-initGoogleAnalytics();
 syncMobileScrollStages();

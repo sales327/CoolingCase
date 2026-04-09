@@ -11,9 +11,15 @@
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="author" content="Nicola Gurpinar">
   <meta name="application-name" content="Cryomanta">
-  <meta name="google-analytics-id" content="" id="ga-measurement-id">
   <meta name="format-detection" content="telephone=no, address=no, email=no">
   <meta name="theme-color" content="#efe6d6">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-79BESW7F0E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-79BESW7F0E');
+  </script>
   <link rel="canonical" href="https://cryomanta.com/" id="canonical-link">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Cryomanta">
@@ -153,7 +159,10 @@
   <div id="top" aria-hidden="true"></div>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="#top" aria-label="Cryomanta home">Cryomanta</a>
+      <a class="brand" href="#top" aria-label="Cryomanta home">
+        <span class="brand-primary">Cryomanta</span>
+        <span class="brand-secondary">Cooling cases</span>
+      </a>
 
       <div class="header-controls">
         <p class="header-summary" data-i18n="headerSummary">
@@ -203,7 +212,7 @@
             </ul>
 
             <div class="hero-actions">
-              <a class="button button-primary" href="#feedback" data-i18n-html="heroCtaPrimary">Join waitlist - <strong>CHF 15</strong> off</a>
+              <a class="button button-primary" href="#feedback" data-i18n-html="heroCtaPrimary">Join waitlist &amp; save <strong>CHF 15</strong></a>
               <a class="button button-secondary" href="#feedback-form" data-i18n="heroCtaSecondary">Give feedback</a>
             </div>
 
