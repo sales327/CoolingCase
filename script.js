@@ -32,6 +32,7 @@ const LANGUAGE_KEY = "cooling-case-language";
 const PRIORITY_LIMIT = 3;
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 const GA_MEASUREMENT_ID_PATTERN = /^G-[A-Z0-9]+$/i;
+const SITE_URL = "https://cryomanta.com/";
 
 let currentLanguage = "en";
 let lastSubmissionHadEmail = null;
@@ -39,9 +40,9 @@ let googleAnalyticsInitialized = false;
 
 const translations = {
   en: {
-    pageTitle: "Eiskalt Cooling Case | Phone & Tablet Cooling for Extreme Heat",
+    pageTitle: "Cryomanta | Phone & Tablet Cooling for Extreme Heat",
     pageDescription:
-      "Eiskalt Cooling Case is a Swiss cooling case concept for phones and tablets in extreme heat, built for glare, throttling, shutdown risk and harsh outdoor use.",
+      "Cryomanta is a Swiss cooling case concept for phones and tablets in extreme heat, built for glare, throttling, shutdown risk and harsh outdoor use.",
     headerSummary: "Swiss cooling for phones and tablets in extreme heat.",
     navConcept: "Concept",
     navFeedback: "Feedback",
@@ -56,7 +57,7 @@ const translations = {
     heroPoint3: "Impeccable in fit, feel and reliability under pressure",
     heroCtaPrimary: "Join waitlist - CHF 15 off",
     heroCtaSecondary: "Give feedback",
-    heroNote: "Concept only. Under development. No product currently for sale.",
+    heroNote: "Concept only. Under development. Stay tuned, we keep you posted.",
     pricingLabel: "Indicative pricing",
     pricingTitle: "Reference pricing for the first production batch.",
     pricingNote: "Non-binding concept prices. Final pricing may change.",
@@ -65,9 +66,9 @@ const translations = {
     priceRuggedPhones: "Rugged phones",
     priceRuggedTablets: "Rugged tablets",
     developmentLabel: "Under development",
-    developmentTitle: "Development before manufacturing.",
+    developmentTitle: "Stay tuned. We keep you posted.",
     developmentText:
-      "Cooling Case is still under development. This page explains the concept, gathers feedback on overheating problems, and helps prioritize the first production batch.",
+      "Cryomanta is in prototyping. We are refining use cases, cooling direction and fit before the first production batch, and we will keep you posted as development progresses.",
     devCard1Title: "Robust",
     devCard1Text:
       "Designed to stay dependable under direct sun, sustained load and rougher outdoor handling.",
@@ -78,13 +79,14 @@ const translations = {
     devCard3Text:
       "Built around clean fit, confident grip, durable materials and a premium end result.",
     feedbackLabel: "Feedback, waitlist and contact",
-    feedbackTitle: "Help shape the first version.",
+    feedbackTitle: "Stay tuned. We keep you posted.",
     feedbackText:
-      "Tell us where overheating gets in the way and which design tradeoffs matter most. If you add an email address, the waitlist flow will reveal the CHF 15 first-batch incentive and the consent checkbox for updates.",
+      "Tell us where overheating gets in the way and which design tradeoffs matter most. If you add an email address, the waitlist flow will reveal the <strong>CHF 15</strong> first-batch incentive and the consent checkbox for updates.",
     stressTitle: "Typical stress cases",
     stress1: "Direct sun on cockpit glass or controller screens",
     stress2: "Brightness throttling and reduced performance during active use",
     stress3: "Shutdown risk when charging, navigating, recording, or gaming outdoors",
+    stress4: "Very hot screen surfaces after direct sun exposure",
     emailLabel: "Email",
     emailOptional: "(optional)",
     emailPlaceholder: "name@example.com",
@@ -103,24 +105,26 @@ const translations = {
     deviceAndroidTablet: "Android tablet",
     deviceTabletPc: "Tablet PC",
     deviceLaptop: "Laptop",
+    removeAfterLabel: "Will you remove the cooling case after every usage?",
+    removeYes: "Yes",
+    removeNo: "No",
+    removeDepends: "Depends on the situation",
     priorityLegend: "Feature priorities",
     priorityHelp: "Choose up to 3.",
     priorityCooling: "better cooling performance",
     priorityNoise: "lower noise",
     prioritySlim: "slimmer size",
-    priorityWeight: "lower weight",
-    priorityGrip: "better grip",
     priorityProtection: "stronger protection",
-    priorityBattery: "better battery efficiency",
-    priorityOutdoor: "outdoor / sunlight suitability",
+    priorityBattery: "cooling without external supply",
     priorityMount: "mount compatibility",
+    priorityColor: "color customisation",
     priorityError: "Choose up to 3 feature priorities.",
-    problemLabel: "What overheating problem should this product solve for you?",
+    problemLabel: "Why do you want to solve overheating in your setup?",
     problemPlaceholder:
-      "Describe the heat, glare, throttling, dimming, shutdown, or mounting problem you want solved.",
-    waitlistNote: "Waitlist users receive CHF 15 off the first production batch.",
+      "Tell us what happens today, why it matters, and what would improve your use case.",
+    waitlistNote: "Waitlist users receive <strong>CHF 15</strong> off the first production batch.",
     consentText:
-      "I agree to receive Cooling Case email updates about development and release timing.",
+      "I agree to receive Cryomanta email updates about development and release timing.",
     submitButton: "Send feedback",
     submitSending: "Sending...",
     formDisclaimer: "Feedback and waitlist flow only. No checkout and no live ordering.",
@@ -136,15 +140,20 @@ const translations = {
     resetButton: "Send another response",
     faqLabel: "FAQ",
     faqTitle: "Straight answers for an early concept.",
-    faq1Question: "Is this available now?",
-    faq1Answer: "Not yet. Under development, planned release end of 2026.",
+    faq1Question: "What is the current state?",
+    faq1Answer: "Prototyping.",
     faq2Question: "Will there be iPad support?",
     faq2Answer: "Yes, planned.",
     faq3Question: "Which devices will it support?",
     faq3Answer: "Major phones and tablets.",
-    faq4Question: "Is this already for sale?",
-    faq4Answer: "No. This page is for interest and feedback only.",
-    footerNote: "Visuals are concept renders. Product is under development.",
+    faq4Question: "What technology will be used?",
+    faq4Answer:
+      "Current development focuses on fan cooling with directed airflow. Depending on the use case, vented concepts or water-evaporative cooling for extreme scenarios may also be explored.",
+    faq5Question: "Is this available now?",
+    faq5Answer: "Not yet. Under development, planned release end of 2026.",
+    faq6Question: "Is this already for sale?",
+    faq6Answer: "Not yet, we are working on the prototype. We keep you posted.",
+    footerNote: "Visuals are concept renders. Stay tuned, we keep you posted.",
     contactTitle: "Contact",
     contactIntro:
       "Use this form for direct questions about development, compatibility or the project timeline.",
@@ -165,10 +174,10 @@ const translations = {
     contactResetButton: "Send another message",
     privacyTitle: "Privacy policy",
     privacyBody:
-      "This website presents the Cooling Case concept and processes feedback or waitlist submissions. If you use the form, submitted data can include your email address, use case, device type, selected priorities and your message. Form submissions are processed via Web3Forms and delivered to the configured inbox. We use submitted data only to answer enquiries, manage the waitlist and support product development. The selected language is stored locally in your browser so the page can remember your preference. You may request information, correction or deletion of submitted personal data by sending a new message through the contact form and referencing the email address used for the original submission.",
+      "This website presents the Cryomanta concept and processes feedback or waitlist submissions. If you use the form, submitted data can include your email address, use case, device type, selected priorities and your message. Form submissions are processed via Web3Forms and delivered to the configured inbox. We use submitted data only to answer enquiries, manage the waitlist and support product development. The selected language is stored locally in your browser so the page can remember your preference. You may request information, correction or deletion of submitted personal data by sending a new message through the contact form and referencing the email address used for the original submission.",
     legalTitle: "Legal notice",
     legalBody:
-      "<strong>Responsible:</strong> Nicola Gurpinar, Switzerland.<br><strong>Contact:</strong> via the contact form on this page.<br>This website is a concept landing page for Eiskalt Cooling Case. Content is provided for general information about the project status and may change during development. Liability for external links and third-party services remains with their respective operators.",
+      "<strong>Responsible:</strong> Nicola Gurpinar, Switzerland.<br><strong>Contact:</strong> via the contact form on this page.<br>This website is a concept landing page for Cryomanta. Content is provided for general information about the project status and may change during development. Liability for external links and third-party services remains with their respective operators.",
   },
   de: {
     pageTitle: "Eiskalt Cooling Case | Konzept für extreme Hitze",
@@ -306,11 +315,56 @@ const translations = {
 translations.de.headerSummary =
   "Schweizer Cooling f\u00FCr Smartphones und Tablets bei extremer Hitze.";
 translations.de.pageTitle =
-  "Eiskalt Cooling Case | K\u00FChlung f\u00FCr Handy und Tablet bei extremer Hitze";
+  "Cryomanta | K\u00FChlung f\u00FCr Handy und Tablet bei extremer Hitze";
 translations.de.pageDescription =
-  "Eiskalt Cooling Case ist ein Schweizer Cooling-Case-Konzept f\u00FCr Smartphones und Tablets bei extremer Hitze, Blendung, Drosselung und Abschaltrisiko im Ausseneinsatz.";
+  "Cryomanta ist ein Schweizer Cooling-Case-Konzept f\u00FCr Smartphones und Tablets bei extremer Hitze, Blendung, Drosselung und Abschaltrisiko im Ausseneinsatz.";
 translations.de.pricingNote =
   "Unverbindliche Konzeptpreise. Endg\u00FCltige Preise k\u00F6nnen sich \u00E4ndern.";
+translations.de.heroNote =
+  "Nur Konzept. In Entwicklung. Bleib dran, wir halten dich auf dem Laufenden.";
+translations.de.developmentTitle =
+  "Bleib dran. Wir halten dich auf dem Laufenden.";
+translations.de.developmentText =
+  "Cryomanta ist im Prototyping. Wir verfeinern Einsatzbereiche, K\u00FChlrichtung und Passform vor der ersten Produktionscharge und halten dich \u00FCber die Entwicklung auf dem Laufenden.";
+translations.de.feedbackTitle =
+  "Bleib dran. Wir halten dich auf dem Laufenden.";
+translations.de.feedbackText =
+  "Sag uns, wo \u00DCberhitzung st\u00F6rt und welche Designabw\u00E4gungen am wichtigsten sind. Wenn du eine E-Mail angibst, erscheint der Hinweis auf <strong>CHF 15</strong> f\u00FCr die erste Charge samt Einwilligung f\u00FCr Updates.";
+translations.de.stress4 =
+  "Sehr heisse Displayoberfl\u00E4chen nach direkter Sonneneinstrahlung";
+translations.de.removeAfterLabel =
+  "Wirst du das Cooling Case nach jeder Nutzung wieder entfernen?";
+translations.de.removeYes = "Ja";
+translations.de.removeNo = "Nein";
+translations.de.removeDepends = "Kommt auf die Situation an";
+translations.de.priorityBattery =
+  "K\u00FChlung ohne externe Stromversorgung";
+translations.de.priorityColor = "Farbindividualisierung";
+translations.de.problemLabel =
+  "Warum willst du \u00DCberhitzung in deinem Setup l\u00F6sen?";
+translations.de.problemPlaceholder =
+  "Erz\u00E4hl uns, was heute passiert, warum es wichtig ist und was deinen Einsatz verbessern w\u00FCrde.";
+translations.de.waitlistNote =
+  "Wartelisten-Nutzer erhalten <strong>CHF 15</strong> Rabatt auf die erste Produktionscharge.";
+translations.de.consentText =
+  "Ich bin einverstanden, E-Mail-Updates zu Entwicklung und Freigabe von Cryomanta zu erhalten.";
+translations.de.faq1Question = "Wie ist der aktuelle Stand?";
+translations.de.faq1Answer = "Prototyping.";
+translations.de.faq4Question = "Welche Technologie wird verwendet?";
+translations.de.faq4Answer =
+  "Der aktuelle Fokus liegt auf L\u00FCfterk\u00FChlung mit gezieltem Luftstrom. Je nach Einsatzfall k\u00F6nnen auch bel\u00FCftete Konzepte oder wasserverdunstende K\u00FChlung f\u00FCr extreme Szenarien gepr\u00FCft werden.";
+translations.de.faq5Question = "Ist das bereits verf\u00FCgbar?";
+translations.de.faq5Answer =
+  "Noch nicht. In Entwicklung, geplante Freigabe Ende 2026.";
+translations.de.faq6Question = "Ist das Produkt schon im Verkauf?";
+translations.de.faq6Answer =
+  "Noch nicht, wir arbeiten am Prototyp. Wir halten dich auf dem Laufenden.";
+translations.de.privacyBody =
+  "Diese Website pr\u00E4sentiert das Cryomanta-Konzept und verarbeitet Feedback- oder Wartelistenanfragen. Bei Nutzung des Formulars k\u00F6nnen insbesondere E-Mail-Adresse, Einsatzbereich, Ger\u00E4tetyp, gew\u00E4hlte Priorit\u00E4ten und Nachricht \u00FCbermittelt werden. Formularanfragen werden \u00FCber Web3Forms verarbeitet und an das konfigurierte Postfach zugestellt. Die \u00FCbermittelten Daten werden ausschliesslich zur Beantwortung von Anfragen, zur Verwaltung der Warteliste und zur Unterst\u00FCtzung der Produktentwicklung verwendet. Die gew\u00E4hlte Sprache wird lokal im Browser gespeichert, damit die Seite deine Pr\u00E4ferenz behalten kann. Du kannst Auskunft, Berichtigung oder L\u00F6schung deiner \u00FCbermittelten Daten verlangen, indem du das Kontaktformular erneut nutzt und die zuvor verwendete E-Mail-Adresse nennst.";
+translations.de.legalBody =
+  "<strong>Verantwortlich:</strong> Nicola Gurpinar, Schweiz.<br><strong>Kontakt:</strong> \u00FCber das Kontaktformular auf dieser Seite.<br>Diese Website ist eine Konzept-Landingpage f\u00FCr Cryomanta. Inhalte dienen der allgemeinen Information zum Projektstand und k\u00F6nnen sich w\u00E4hrend der Entwicklung \u00E4ndern. F\u00FCr externe Links und Dienste Dritter sind ausschliesslich deren Betreiber verantwortlich.";
+translations.de.footerNote =
+  "Visuals sind Konzept-Renderings. Bleib dran, wir halten dich auf dem Laufenden.";
 
 function getText(key) {
   return translations[currentLanguage][key];
@@ -399,12 +453,12 @@ function updateSeoMetadata() {
     ogLocale.setAttribute("content", currentLanguage === "de" ? "de_CH" : "en_CH");
   }
 
-  if ((window.location.protocol === "http:" || window.location.protocol === "https:") && canonicalLink) {
-    canonicalLink.setAttribute("href", window.location.href.split("#")[0]);
+  if (canonicalLink) {
+    canonicalLink.setAttribute("href", SITE_URL);
   }
 
-  if ((window.location.protocol === "http:" || window.location.protocol === "https:") && ogUrl) {
-    ogUrl.setAttribute("content", window.location.href.split("#")[0]);
+  if (ogUrl) {
+    ogUrl.setAttribute("content", SITE_URL);
   }
 }
 
