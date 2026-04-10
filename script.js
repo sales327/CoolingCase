@@ -151,7 +151,7 @@ const translations = {
     priorityError: "Choose up to 3 feature priorities.",
     problemLabel: "Why do you want to solve overheating in your setup?",
     problemPlaceholder:
-      "Tell us about a situation where overheating was a problem, why it matters, and what .",
+      "Tell us about a situation where overheating was a problem and why it mattered.",
     waitlistNote: "Waitlist users receive <strong>CHF 15</strong> off the first production batch.",
     consentText:
       "I agree to receive Cryomanta email updates about development and release timing.",
