@@ -35,6 +35,7 @@ const SITE_URL = "https://cryomanta.com/";
 const ADS_CONVERSION_SEND_TO = "AW-17891805169/lQvpCLbz_ZgcEPGPvdNC";
 const ADS_CONVERSION_VALUE = 1.0;
 const ADS_CONVERSION_CURRENCY = "CHF";
+const WHATSAPP_HOST_PATTERN = /(^|\.)whatsapp\.com$/i;
 const mobileScrollMedia = window.matchMedia("(max-width: 720px)");
 const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOBILE_STAGE_DEFINITIONS = [
@@ -403,16 +404,168 @@ function getText(key) {
   return translations[currentLanguage][key];
 }
 
-function trackLeadFormConversion() {
+function getLeadWorkerEndpoint() {
+  return document
+    .querySelector('meta[name="lead-worker-endpoint"]')
+    ?.getAttribute("content")
+    ?.trim() || "";
+}
+
+function trackLeadConversion(onComplete) {
+  const callback = typeof onComplete === "function" ? onComplete : null;
+
   if (typeof window.gtag !== "function") {
+    callback?.();
     return;
   }
+
+  let completed = false;
+  const finish = () => {
+    if (completed) {
+      return;
+    }
+
+    completed = true;
+    callback?.();
+  };
 
   window.gtag("event", "conversion", {
     send_to: ADS_CONVERSION_SEND_TO,
     value: ADS_CONVERSION_VALUE,
     currency: ADS_CONVERSION_CURRENCY,
+    event_callback: finish,
   });
+
+  window.setTimeout(finish, 700);
+}
+
+function sendLeadWorkerEvent(eventName, details = {}) {
+  const endpoint = getLeadWorkerEndpoint();
+
+  if (!endpoint) {
+    return Promise.resolve(false);
+  }
+
+  const payload = {
+    event: eventName,
+    source: "website",
+    language: currentLanguage,
+    page_path: window.location.pathname,
+    page_url: window.location.href,
+    timestamp: new Date().toISOString(),
+    ...details,
+  };
+  const body = JSON.stringify(payload);
+
+  if (typeof navigator.sendBeacon === "function") {
+    try {
+      const queued = navigator.sendBeacon(
+        endpoint,
+        new Blob([body], { type: "application/json" }),
+      );
+
+      if (queued) {
+        return Promise.resolve(true);
+      }
+    } catch (error) {
+      // Fall through to fetch when sendBeacon is unavailable or rejected.
+    }
+  }
+
+  return fetch(endpoint, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body,
+    keepalive: true,
+    mode: "cors",
+  })
+    .then(() => true)
+    .catch(() => false);
+}
+
+function isWhatsAppUrl(urlValue) {
+  if (!urlValue) {
+    return false;
+  }
+
+  try {
+    const url = new URL(urlValue, window.location.href);
+    const hostname = url.hostname.toLowerCase();
+
+    return hostname === "wa.me" || WHATSAPP_HOST_PATTERN.test(hostname);
+  } catch (error) {
+    return /wa\.me|whatsapp\.com/i.test(urlValue);
+  }
+}
+
+function getWhatsAppEventDetails(element, href) {
+  return {
+    channel: "whatsapp",
+    href,
+    label:
+      element?.getAttribute("aria-label")?.trim() ||
+      element?.textContent?.trim() ||
+      "whatsapp",
+  };
+}
+
+function trackWhatsAppLead(details = {}, onComplete) {
+  const eventDetails =
+    details && typeof details === "object"
+      ? { channel: "whatsapp", ...details }
+      : { channel: "whatsapp" };
+
+  sendLeadWorkerEvent("whatsapp_click", eventDetails);
+  trackLeadConversion(onComplete);
+}
+
+function handleWhatsAppClick(event) {
+  const target = event.target instanceof Element ? event.target : null;
+  const link = target?.closest("a[href]") || null;
+
+  if (!link) {
+    return;
+  }
+
+  const href = link.href || link.getAttribute("href") || "";
+
+  if (!isWhatsAppUrl(href)) {
+    return;
+  }
+
+  const eventDetails = getWhatsAppEventDetails(link, href);
+  const shouldLeaveNavigationUntouched =
+    event.defaultPrevented ||
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey ||
+    link.target === "_blank" ||
+    link.hasAttribute("download");
+
+  if (shouldLeaveNavigationUntouched) {
+    trackWhatsAppLead(eventDetails);
+    return;
+  }
+
+  event.preventDefault();
+
+  let navigated = false;
+  const navigateToWhatsApp = () => {
+    if (navigated) {
+      return;
+    }
+
+    navigated = true;
+    window.location.assign(href);
+  };
+
+  trackWhatsAppLead(eventDetails, navigateToWhatsApp);
+  window.setTimeout(navigateToWhatsApp, 700);
 }
 
 function updateSeoMetadata() {
@@ -823,7 +976,7 @@ if (feedbackForm) {
 
     try {
       await submitWeb3FormData(formData);
-      trackLeadFormConversion();
+      trackLeadConversion();
 
       lastSubmissionHadEmail = email.length > 0;
       updateSuccessBody();
@@ -871,7 +1024,7 @@ if (contactForm) {
 
     try {
       await submitWeb3FormData(formData);
-      trackLeadFormConversion();
+      trackLeadConversion();
 
       contactForm.hidden = true;
       contactSuccessCard.hidden = false;
@@ -899,6 +1052,9 @@ if (resetFormButton) {
 if (contactResetFormButton) {
   contactResetFormButton.addEventListener("click", resetContactForm);
 }
+
+document.addEventListener("click", handleWhatsAppClick);
+window.trackWhatsAppLead = trackWhatsAppLead;
 
 window.addEventListener("scroll", requestMobileScrollStageUpdate, { passive: true });
 window.addEventListener("resize", syncMobileScrollStages);
