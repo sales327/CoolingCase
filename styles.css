@@ -1097,7 +1097,11 @@ textarea:focus {
     align-self: end;
     margin-top: auto;
     padding-top: 0.7rem;
-    transform: translateY(40px);
+    transform: none;
+    padding: 0.72rem;
+    border-radius: 1rem;
+    background: linear-gradient(180deg, rgba(248, 243, 235, 0.82) 0%, rgba(248, 243, 235, 0.92) 100%);
+    backdrop-filter: blur(3px);
   }
 
   .hero-text {
@@ -1131,7 +1135,7 @@ textarea:focus {
   }
 
   .hero-message-stage {
-    height: 8.9rem;
+    min-height: 10rem;
   }
 
   .hero-message {
@@ -1229,10 +1233,10 @@ textarea:focus {
   }
 
   .hero-actions .button-primary {
-    width: auto;
-    min-width: 16.5rem;
-    justify-self: center;
-    transform: translateY(3px);
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+    transform: none;
   }
 
   .hero-note {
