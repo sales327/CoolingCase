@@ -288,7 +288,7 @@ main {
   display: flex;
   align-items: stretch;
   padding: clamp(0.9rem, 2.3vw, 1.8rem);
-  min-height: calc((100svh - 6.25rem) * 1.2);
+  min-height: min(41rem, calc(100svh - 6.25rem));
   border: 1px solid rgba(109, 95, 80, 0.14);
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -332,12 +332,14 @@ main {
   z-index: 1;
   display: flex;
   width: 100%;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .hero-copy {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto;
+  align-content: start;
+  align-self: flex-start;
   gap: 1rem;
   width: min(100%, 37rem);
   padding: clamp(1rem, 1.9vw, 1.5rem);
@@ -350,8 +352,8 @@ main {
 .hero-details {
   display: flex;
   flex-direction: column;
-  align-self: end;
-  padding-top: 0.4rem;
+  align-self: start;
+  padding-top: 0.65rem;
 }
 
 .hero-note-row {
@@ -999,7 +1001,7 @@ textarea:focus {
   }
 
   .hero-shell {
-    min-height: calc((100svh - 6.85rem) * 1.2);
+    min-height: min(38rem, calc(100svh - 6.85rem));
     padding: 0.85rem;
   }
 
