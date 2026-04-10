@@ -26,6 +26,7 @@ const ogUrl = document.getElementById("og-url");
 const ogLocale = document.getElementById("og-locale");
 const twitterTitle = document.getElementById("twitter-title");
 const twitterDescription = document.getElementById("twitter-description");
+const heroSection = document.querySelector(".hero-section");
 
 const LANGUAGE_KEY = "cooling-case-language";
 const PRIORITY_LIMIT = 3;
@@ -34,13 +35,15 @@ const SITE_URL = "https://cryomanta.com/";
 const ADS_CONVERSION_SEND_TO = "AW-17891805169/lQvpCLbz_ZgcEPGPvdNC";
 const ADS_CONVERSION_VALUE = 1.0;
 const ADS_CONVERSION_CURRENCY = "CHF";
-const MOBILE_HERO_SEQUENCE_DISTANCE = 260;
 const mobileScrollMedia = window.matchMedia("(max-width: 720px)");
 const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOBILE_STAGE_DEFINITIONS = [
   {
     sectionSelector: ".pricing-section",
-    itemSelectors: [".pricing-copy > *", ".price-card"],
+    itemSelectors: [".pricing-grid .price-card"],
+    revealStarts: [0.06, 0.14, 0.22, 0.3],
+    exitStart: 0.9,
+    exitRange: 0.12,
   },
   {
     sectionSelector: ".purpose-section",
@@ -57,25 +60,12 @@ const MOBILE_STAGE_DEFINITIONS = [
     sectionSelector: ".faq-section",
     itemSelectors: [".faq-item"],
   },
-  {
-    sectionSelector: ".site-footer",
-    itemSelectors: [".legal-panel"],
-    exitStart: 0.92,
-    exitRange: 0.1,
-  },
 ];
-const heroSection = document.querySelector(".hero-section");
-const heroShell = heroSection?.querySelector(".hero-shell") || null;
-
 let currentLanguage = "en";
 let lastSubmissionHadEmail = null;
 let mobileScrollStages = [];
 let mobileScrollActive = false;
 let mobileScrollFrame = 0;
-let mobileHeroStageActive = false;
-let mobileHeroSequenceProgress = 0;
-let mobileHeroTouchY = null;
-let mobileHeroPointerY = null;
 
 const translations = {
   en: {
@@ -95,9 +85,9 @@ const translations = {
     heroPoint1: "Robust enough for harsh outdoor heat and sustained device load",
     heroPoint2: "Affordable enough to stay realistic for everyday field use",
     heroPoint3: "Impeccable in fit, feel and reliability under pressure",
-    heroCtaPrimary: "Join waitlist &amp; save CHF 15>",
+    heroCtaPrimary: "Join waitlist - CHF 15 off",
     heroCtaSecondary: "Give feedback",
-    heroNote: "Concept only. Under development. Stay tuned, we keep you posted.",
+    heroNote: "Concept only. Under development.",
     pricingLabel: "Indicative pricing",
     pricingTitle: "Reference pricing for the first production batch.",
     pricingNote: "Non-binding concept prices. Final pricing may change.",
@@ -106,7 +96,7 @@ const translations = {
     priceRuggedPhones: "Smartphone | Armored",
     priceRuggedTablets: "Tablet | Armored",
     developmentLabel: "Under development",
-    developmentTitle: "Stay tuned. We keep you posted.",
+    developmentTitle: "Development before the first batch.",
     developmentText:
       "Cryomanta is in prototyping. We are refining use cases, cooling direction and fit before the first production batch, and we will keep you posted as development progresses.",
     devCard1Title: "Robust",
@@ -161,7 +151,7 @@ const translations = {
     priorityError: "Choose up to 3 feature priorities.",
     problemLabel: "Why do you want to solve overheating in your setup?",
     problemPlaceholder:
-      "Tell us what happens today, why it matters, and what would improve your use case.",
+      "Tell us about a situation where overheating was a problem, why it matters, and what .",
     waitlistNote: "Waitlist users receive <strong>CHF 15</strong> off the first production batch.",
     consentText:
       "I agree to receive Cryomanta email updates about development and release timing.",
@@ -192,8 +182,8 @@ const translations = {
     faq5Question: "Is this available now?",
     faq5Answer: "Not yet. Under development, planned release end of 2026.",
     faq6Question: "Is this already for sale?",
-    faq6Answer: "Not yet, we are working on the prototype. We keep you posted.",
-    footerNote: "Visuals are concept renders. Stay tuned, we keep you posted.",
+    faq6Answer: "Not yet, we are working on the prototype.",
+    footerNote: "Visuals are concept renders. Product under development.",
     contactTitle: "Contact",
     contactIntro:
       "Use this form for direct questions about development, compatibility or the project timeline.",
@@ -236,7 +226,7 @@ const translations = {
     heroPoint1: "Robust genug für grosse Hitze im Freien und dauerhafte Gerätelast",
     heroPoint2: "Erschwinglich genug für reale Einsätze im Alltag und im Feld",
     heroPoint3: "Makellos in Passform, Haptik und Zuverlässigkeit unter Belastung",
-    heroCtaPrimary: "Warteliste &amp; <strong>CHF 15</strong> sparen",
+    heroCtaPrimary: "Warteliste - CHF 15 Rabatt",
     heroCtaSecondary: "Feedback geben",
     heroNote: "Nur Konzept. In Entwicklung. Aktuell nicht im Verkauf.",
     pricingLabel: "Richtpreise",
@@ -364,9 +354,9 @@ translations.de.pricingNote =
 translations.de.heroTitle =
   "Handy k\u00FChl bei extremer Hitze.";
 translations.de.heroNote =
-  "Nur Konzept. In Entwicklung. Bleib dran, wir halten dich auf dem Laufenden.";
+  "Nur Konzept. In Entwicklung.";
 translations.de.developmentTitle =
-  "Bleib dran. Wir halten dich auf dem Laufenden.";
+  "Entwicklung vor der ersten Charge.";
 translations.de.developmentText =
   "Cryomanta ist im Prototyping. Wir verfeinern Einsatzbereiche, K\u00FChlrichtung und Passform vor der ersten Produktionscharge und halten dich \u00FCber die Entwicklung auf dem Laufenden.";
 translations.de.feedbackTitle =
@@ -401,13 +391,13 @@ translations.de.faq5Answer =
   "Noch nicht. In Entwicklung, geplante Freigabe Ende 2026.";
 translations.de.faq6Question = "Ist das Produkt schon im Verkauf?";
 translations.de.faq6Answer =
-  "Noch nicht, wir arbeiten am Prototyp. Wir halten dich auf dem Laufenden.";
+  "Noch nicht, wir arbeiten am Prototyp.";
 translations.de.privacyBody =
   "Diese Website pr\u00E4sentiert das Cryomanta-Konzept und verarbeitet Feedback- oder Wartelistenanfragen. Bei Nutzung des Formulars k\u00F6nnen insbesondere E-Mail-Adresse, Einsatzbereich, Ger\u00E4tetyp, gew\u00E4hlte Priorit\u00E4ten und Nachricht \u00FCbermittelt werden. Formularanfragen werden \u00FCber Web3Forms verarbeitet und an das konfigurierte Postfach zugestellt. Die \u00FCbermittelten Daten werden ausschliesslich zur Beantwortung von Anfragen, zur Verwaltung der Warteliste und zur Unterst\u00FCtzung der Produktentwicklung verwendet. Die gew\u00E4hlte Sprache wird lokal im Browser gespeichert, damit die Seite deine Pr\u00E4ferenz behalten kann. Du kannst Auskunft, Berichtigung oder L\u00F6schung deiner \u00FCbermittelten Daten verlangen, indem du das Kontaktformular erneut nutzt und die zuvor verwendete E-Mail-Adresse nennst.";
 translations.de.legalBody =
   "<strong>Verantwortlich:</strong> Nicola Gurpinar, Schweiz.<br><strong>Kontakt:</strong> \u00FCber das Kontaktformular auf dieser Seite.<br>Diese Website ist eine Konzept-Landingpage f\u00FCr Cryomanta. Inhalte dienen der allgemeinen Information zum Projektstand und k\u00F6nnen sich w\u00E4hrend der Entwicklung \u00E4ndern. F\u00FCr externe Links und Dienste Dritter sind ausschliesslich deren Betreiber verantwortlich.";
 translations.de.footerNote =
-  "Visuals sind Konzept-Renderings. Bleib dran, wir halten dich auf dem Laufenden.";
+  "Visuals sind Konzept-Renderings. Produkt in Entwicklung.";
 
 function getText(key) {
   return translations[currentLanguage][key];
@@ -566,190 +556,22 @@ function clampValue(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
 
-function setMobileHeroValues({
-  textOpacity = 1,
-  textShift = 0,
-  pointsOpacity = 1,
-  pointsShift = 0,
-  actionsOpacity = 1,
-  actionsShift = 0,
-} = {}) {
+function updateHeroMessageSwap() {
   if (!heroSection) {
     return;
   }
 
-  heroSection.style.setProperty("--hero-text-opacity", String(textOpacity));
-  heroSection.style.setProperty("--hero-text-shift", `${textShift}px`);
-  heroSection.style.setProperty("--hero-points-opacity", String(pointsOpacity));
-  heroSection.style.setProperty("--hero-points-shift", `${pointsShift}px`);
-  heroSection.style.setProperty("--hero-actions-opacity", String(actionsOpacity));
-  heroSection.style.setProperty("--hero-actions-shift", `${actionsShift}px`);
-}
-
-function clearMobileHeroStage() {
-  mobileHeroStageActive = false;
-  mobileHeroSequenceProgress = 0;
-  mobileHeroTouchY = null;
-  document.documentElement.classList.remove("hero-lock-active");
-  document.body.classList.remove("hero-lock-active");
-
-  if (!heroSection) {
+  if (!mobileScrollMedia.matches || reducedMotionMedia.matches) {
+    heroSection.style.setProperty("--hero-message-progress", "0");
     return;
   }
 
-  heroSection.classList.remove("mobile-hero-stage");
-  setMobileHeroValues();
-}
+  const currentScroll = window.scrollY || window.pageYOffset || 0;
+  const start = Math.max(0, heroSection.offsetTop - 8);
+  const range = Math.max(140, Math.min(240, heroSection.offsetHeight * 0.22));
+  const progress = clampValue((currentScroll - start) / range);
 
-function updateMobileHeroStage() {
-  if (!mobileHeroStageActive || !heroSection || !heroShell) {
-    return;
-  }
-
-  const progress = mobileHeroSequenceProgress;
-  document.documentElement.classList.toggle("hero-lock-active", progress < 1);
-  document.body.classList.toggle("hero-lock-active", progress < 1);
-
-  const getStageValues = (start, enterEnd, holdEnd, exitEnd, enterShift, exitShift) => {
-    if (progress <= start) {
-      return { opacity: 0, shift: enterShift };
-    }
-
-    if (progress <= enterEnd) {
-      const t = clampValue((progress - start) / Math.max(enterEnd - start, 0.001));
-      return {
-        opacity: t,
-        shift: enterShift * (1 - t),
-      };
-    }
-
-    if (progress <= holdEnd) {
-      return { opacity: 1, shift: 0 };
-    }
-
-    if (progress <= exitEnd) {
-      const t = clampValue((progress - holdEnd) / Math.max(exitEnd - holdEnd, 0.001));
-      return {
-        opacity: 1 - t,
-        shift: exitShift * t,
-      };
-    }
-
-    return { opacity: 0, shift: exitShift };
-  };
-
-  const textStage = getStageValues(0.02, 0.22, 0.34, 0.5, 42, -26);
-  const pointsStage = getStageValues(0.36, 0.56, 0.68, 0.84, 48, -30);
-  const actionsStage = getStageValues(0.7, 0.9, 1.02, 1.08, 54, 0);
-
-  setMobileHeroValues({
-    textOpacity: textStage.opacity.toFixed(3),
-    textShift: textStage.shift.toFixed(2),
-    pointsOpacity: pointsStage.opacity.toFixed(3),
-    pointsShift: pointsStage.shift.toFixed(2),
-    actionsOpacity: actionsStage.opacity.toFixed(3),
-    actionsShift: actionsStage.shift.toFixed(2),
-  });
-}
-
-function updateMobileHeroSequenceFromDelta(deltaY) {
-  if (!mobileHeroStageActive || !heroSection) {
-    return false;
-  }
-
-  const atTop = window.scrollY <= 6;
-  const canAdvance = deltaY > 0 && atTop && mobileHeroSequenceProgress < 1;
-  const canReverse = deltaY < 0 && atTop && mobileHeroSequenceProgress > 0;
-
-  if (!canAdvance && !canReverse) {
-    return false;
-  }
-
-  const nextProgress = clampValue(
-    mobileHeroSequenceProgress + deltaY / MOBILE_HERO_SEQUENCE_DISTANCE,
-  );
-
-  if (nextProgress === mobileHeroSequenceProgress) {
-    if (atTop) {
-      window.scrollTo(0, 0);
-    }
-
-    return canAdvance || canReverse;
-  }
-
-  mobileHeroSequenceProgress = nextProgress;
-  updateMobileHeroStage();
-  window.scrollTo(0, 0);
-  return true;
-}
-
-function handleMobileHeroWheel(event) {
-  if (!mobileHeroStageActive) {
-    return;
-  }
-
-  if (updateMobileHeroSequenceFromDelta(event.deltaY)) {
-    event.preventDefault();
-  }
-}
-
-function handleMobileHeroTouchStart(event) {
-  if (!mobileHeroStageActive || event.touches.length !== 1) {
-    return;
-  }
-
-  mobileHeroTouchY = event.touches[0].clientY;
-}
-
-function handleMobileHeroTouchMove(event) {
-  if (!mobileHeroStageActive || event.touches.length !== 1 || mobileHeroTouchY === null) {
-    return;
-  }
-
-  const currentY = event.touches[0].clientY;
-  const deltaY = mobileHeroTouchY - currentY;
-  mobileHeroTouchY = currentY;
-
-  if (Math.abs(deltaY) < 0.5) {
-    return;
-  }
-
-  if (updateMobileHeroSequenceFromDelta(deltaY)) {
-    event.preventDefault();
-  }
-}
-
-function handleMobileHeroTouchEnd() {
-  mobileHeroTouchY = null;
-}
-
-function handleMobileHeroPointerDown(event) {
-  if (!mobileHeroStageActive || event.pointerType !== "touch") {
-    return;
-  }
-
-  mobileHeroPointerY = event.clientY;
-}
-
-function handleMobileHeroPointerMove(event) {
-  if (!mobileHeroStageActive || event.pointerType !== "touch" || mobileHeroPointerY === null) {
-    return;
-  }
-
-  const deltaY = mobileHeroPointerY - event.clientY;
-  mobileHeroPointerY = event.clientY;
-
-  if (Math.abs(deltaY) < 0.5) {
-    return;
-  }
-
-  if (updateMobileHeroSequenceFromDelta(deltaY)) {
-    event.preventDefault();
-  }
-}
-
-function handleMobileHeroPointerEnd() {
-  mobileHeroPointerY = null;
+  heroSection.style.setProperty("--hero-message-progress", progress.toFixed(3));
 }
 
 function clearMobileScrollStages() {
@@ -868,18 +690,17 @@ function updateMobileScrollStages() {
 }
 
 function requestMobileScrollStageUpdate() {
-  if (mobileHeroStageActive && mobileHeroSequenceProgress < 1 && window.scrollY > 0) {
-    window.scrollTo(0, 0);
-  }
-
-  if ((!mobileScrollActive && !mobileHeroStageActive) || mobileScrollFrame) {
+  if (mobileScrollFrame) {
     return;
   }
 
   mobileScrollFrame = window.requestAnimationFrame(() => {
     mobileScrollFrame = 0;
-    updateMobileScrollStages();
-    updateMobileHeroStage();
+    updateHeroMessageSwap();
+
+    if (mobileScrollActive) {
+      updateMobileScrollStages();
+    }
   });
 }
 
@@ -888,20 +709,13 @@ function syncMobileScrollStages() {
 
   if (!shouldEnable) {
     clearMobileScrollStages();
-    clearMobileHeroStage();
+    updateHeroMessageSwap();
     return;
   }
 
-  if (heroSection && heroShell) {
-    heroSection.classList.add("mobile-hero-stage");
-    mobileHeroStageActive = true;
-    document.documentElement.classList.toggle("hero-lock-active", mobileHeroSequenceProgress < 1);
-    document.body.classList.toggle("hero-lock-active", mobileHeroSequenceProgress < 1);
-  }
-
   buildMobileScrollStages();
+  updateHeroMessageSwap();
   updateMobileScrollStages();
-  updateMobileHeroStage();
 }
 
 async function submitWeb3FormData(formData) {
@@ -1088,15 +902,6 @@ if (contactResetFormButton) {
 
 window.addEventListener("scroll", requestMobileScrollStageUpdate, { passive: true });
 window.addEventListener("resize", syncMobileScrollStages);
-window.addEventListener("wheel", handleMobileHeroWheel, { passive: false });
-window.addEventListener("touchstart", handleMobileHeroTouchStart, { passive: true });
-window.addEventListener("touchmove", handleMobileHeroTouchMove, { passive: false });
-window.addEventListener("touchend", handleMobileHeroTouchEnd, { passive: true });
-window.addEventListener("touchcancel", handleMobileHeroTouchEnd, { passive: true });
-window.addEventListener("pointerdown", handleMobileHeroPointerDown, { passive: true });
-window.addEventListener("pointermove", handleMobileHeroPointerMove, { passive: false });
-window.addEventListener("pointerup", handleMobileHeroPointerEnd, { passive: true });
-window.addEventListener("pointercancel", handleMobileHeroPointerEnd, { passive: true });
 
 if (typeof mobileScrollMedia.addEventListener === "function") {
   mobileScrollMedia.addEventListener("change", syncMobileScrollStages);
