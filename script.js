@@ -567,8 +567,8 @@ function updateHeroMessageSwap() {
   }
 
   const currentScroll = window.scrollY || window.pageYOffset || 0;
-  const start = Math.max(0, heroSection.offsetTop - 8);
-  const range = Math.max(140, Math.min(240, heroSection.offsetHeight * 0.22));
+  const start = Math.max(0, heroSection.offsetTop + 56);
+  const range = Math.max(180, Math.min(300, heroSection.offsetHeight * 0.3));
   const progress = clampValue((currentScroll - start) / range);
 
   heroSection.style.setProperty("--hero-message-progress", progress.toFixed(3));
