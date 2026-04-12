@@ -14,6 +14,14 @@
   <meta name="format-detection" content="telephone=no, address=no, email=no">
   <meta name="theme-color" content="#efe6d6">
   <link rel="icon" href="favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="stylesheet" href="styles.css">
+  <link
+    rel="preload"
+    as="image"
+    href="assets/hero-background-desktop-1200.jpg"
+    imagesrcset="assets/hero-background-mobile-768.jpg 768w, assets/hero-background-mobile-1024.jpg 1024w, assets/hero-background-desktop-1200.jpg 1200w, assets/hero-background-desktop-1536.jpg 1536w"
+    imagesizes="(max-width: 720px) 100vw, (max-width: 1200px) 100vw, 1180px"
+  >
   <meta name="lead-worker-endpoint" content="">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-79BESW7F0E"></script>
   <script>
@@ -38,7 +46,7 @@
     content="Cryomanta is a Swiss cooling case concept for phones and tablets in extreme heat, built for glare, throttling, shutdown risk and harsh outdoor use."
     id="og-description"
   >
-  <meta property="og:image" content="assets/hero-background-desktop.png">
+  <meta property="og:image" content="assets/hero-background-desktop-1536.jpg">
   <meta property="og:image:alt" content="Cryomanta concept in a hot desert environment">
   <meta name="twitter:card" content="summary_large_image">
   <meta
@@ -51,7 +59,7 @@
     content="Cryomanta is a Swiss cooling case concept for phones and tablets in extreme heat, built for glare, throttling, shutdown risk and harsh outdoor use."
     id="twitter-description"
   >
-  <meta name="twitter:image" content="assets/hero-background-desktop.png">
+  <meta name="twitter:image" content="assets/hero-background-desktop-1536.jpg">
   <meta name="twitter:image:alt" content="Cryomanta concept in a hot desert environment">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,7 +90,7 @@
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
-        "url": "assets/hero-background-desktop.png"
+        "url": "assets/hero-background-desktop-1536.jpg"
       },
       "about": [
         {
@@ -156,7 +164,6 @@
       ]
     }
   </script>
-  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="top" aria-hidden="true"></div>
@@ -198,7 +205,23 @@
       </div>
 
       <div class="container hero-shell">
-        <div class="hero-backdrop" aria-hidden="true"></div>
+        <div class="hero-backdrop" aria-hidden="true">
+          <picture class="hero-backdrop-media">
+            <source
+              media="(max-width: 720px)"
+              srcset="assets/hero-background-mobile-768.jpg 768w, assets/hero-background-mobile-1024.jpg 1024w"
+              sizes="100vw"
+            >
+            <img
+              src="assets/hero-background-desktop-1200.jpg"
+              srcset="assets/hero-background-desktop-1200.jpg 1200w, assets/hero-background-desktop-1536.jpg 1536w"
+              sizes="(max-width: 1200px) 100vw, 1180px"
+              alt=""
+              fetchpriority="high"
+              decoding="async"
+            >
+          </picture>
+        </div>
         <div class="hero-content">
           <div class="hero-copy">
             <h1 data-i18n="heroTitle">Keep your phone cool in extreme heat.</h1>
