@@ -36,6 +36,7 @@ const ADS_CONVERSION_SEND_TO = "AW-17891805169/lQvpCLbz_ZgcEPGPvdNC";
 const ADS_CONVERSION_VALUE = 1.0;
 const ADS_CONVERSION_CURRENCY = "CHF";
 const WHATSAPP_HOST_PATTERN = /(^|\.)whatsapp\.com$/i;
+const WHATSAPP_MESSAGE_SIGNATURE = "Viele Gr\u00FCsse, Max Mustermann";
 const mobileScrollMedia = window.matchMedia("(max-width: 720px)");
 const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOBILE_STAGE_DEFINITIONS = [
@@ -493,12 +494,98 @@ function isWhatsAppUrl(urlValue) {
 
   try {
     const url = new URL(urlValue, window.location.href);
+    const protocol = url.protocol.toLowerCase();
     const hostname = url.hostname.toLowerCase();
 
-    return hostname === "wa.me" || WHATSAPP_HOST_PATTERN.test(hostname);
+    return protocol === "whatsapp:" || hostname === "wa.me" || WHATSAPP_HOST_PATTERN.test(hostname);
   } catch (error) {
-    return /wa\.me|whatsapp\.com/i.test(urlValue);
+    return /^whatsapp:\/\//i.test(urlValue) || /wa\.me|whatsapp\.com/i.test(urlValue);
   }
+}
+
+function buildPercentEncodedQuery(searchParams) {
+  const queryEntries = Array.from(searchParams.entries());
+
+  if (!queryEntries.length) {
+    return "";
+  }
+
+  return queryEntries
+    .map(
+      ([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+    )
+    .join("&");
+}
+
+function appendWhatsAppSignature(message) {
+  const normalizedMessage = typeof message === "string" ? message.trimEnd() : "";
+
+  if (!normalizedMessage) {
+    return WHATSAPP_MESSAGE_SIGNATURE;
+  }
+
+  if (normalizedMessage.endsWith(WHATSAPP_MESSAGE_SIGNATURE)) {
+    return normalizedMessage;
+  }
+
+  return `${normalizedMessage}\n\n${WHATSAPP_MESSAGE_SIGNATURE}`;
+}
+
+function normalizeWhatsAppUrl(urlValue) {
+  if (!urlValue || !isWhatsAppUrl(urlValue)) {
+    return urlValue;
+  }
+
+  try {
+    const url = new URL(urlValue, window.location.href);
+
+    url.searchParams.set(
+      "text",
+      appendWhatsAppSignature(url.searchParams.get("text") || ""),
+    );
+
+    const query = buildPercentEncodedQuery(url.searchParams);
+
+    return `${url.protocol}//${url.host}${url.pathname}${query ? `?${query}` : ""}${url.hash}`;
+  } catch (error) {
+    if (/([?&]text=)([^&#]*)/i.test(urlValue)) {
+      return urlValue.replace(/([?&]text=)([^&#]*)/i, (match, prefix, value) => {
+        let decodedValue = value;
+
+        try {
+          decodedValue = decodeURIComponent(value.replace(/\+/g, " "));
+        } catch (decodeError) {
+          decodedValue = value.replace(/\+/g, " ");
+        }
+
+        return `${prefix}${encodeURIComponent(appendWhatsAppSignature(decodedValue))}`;
+      });
+    }
+
+    const hashIndex = urlValue.indexOf("#");
+    const baseUrl = hashIndex >= 0 ? urlValue.slice(0, hashIndex) : urlValue;
+    const hash = hashIndex >= 0 ? urlValue.slice(hashIndex) : "";
+    const separator = baseUrl.includes("?") ? "&" : "?";
+    const textParam = `text=${encodeURIComponent(appendWhatsAppSignature(""))}`;
+
+    return `${baseUrl}${separator}${textParam}${hash}`;
+  }
+}
+
+function normalizeWhatsAppLinks() {
+  document.querySelectorAll("a[href]").forEach((link) => {
+    const originalHref = link.getAttribute("href") || "";
+
+    if (!isWhatsAppUrl(originalHref)) {
+      return;
+    }
+
+    const normalizedHref = normalizeWhatsAppUrl(originalHref);
+
+    if (normalizedHref && normalizedHref !== originalHref) {
+      link.setAttribute("href", normalizedHref);
+    }
+  });
 }
 
 function getWhatsAppEventDetails(element, href) {
@@ -536,7 +623,8 @@ function handleWhatsAppClick(event) {
     return;
   }
 
-  const eventDetails = getWhatsAppEventDetails(link, href);
+  const normalizedHref = normalizeWhatsAppUrl(href) || href;
+  const eventDetails = getWhatsAppEventDetails(link, normalizedHref);
   const shouldLeaveNavigationUntouched =
     event.defaultPrevented ||
     event.button !== 0 ||
@@ -546,6 +634,10 @@ function handleWhatsAppClick(event) {
     event.altKey ||
     link.target === "_blank" ||
     link.hasAttribute("download");
+
+  if (normalizedHref !== href) {
+    link.setAttribute("href", normalizedHref);
+  }
 
   if (shouldLeaveNavigationUntouched) {
     trackWhatsAppLead(eventDetails);
@@ -561,7 +653,7 @@ function handleWhatsAppClick(event) {
     }
 
     navigated = true;
-    window.location.assign(href);
+    window.location.assign(normalizedHref);
   };
 
   trackWhatsAppLead(eventDetails, navigateToWhatsApp);
@@ -1053,6 +1145,7 @@ if (contactResetFormButton) {
   contactResetFormButton.addEventListener("click", resetContactForm);
 }
 
+normalizeWhatsAppLinks();
 document.addEventListener("click", handleWhatsAppClick);
 window.trackWhatsAppLead = trackWhatsAppLead;
 
