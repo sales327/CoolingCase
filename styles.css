@@ -420,6 +420,10 @@ main {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.18);
 }
 
+.hero-title-break::before {
+  content: " ";
+}
+
 .hero-text,
 .section-text,
 .info-card p,
@@ -1063,12 +1067,20 @@ textarea:focus {
 
   .hero-copy h1 {
     position: static;
-    max-width: 12rem;
+    max-width: none;
     font-size: clamp(2rem, 9.6vw, 2.55rem);
     line-height: 0.92;
     letter-spacing: -0.06em;
     text-wrap: balance;
     transform: translateY(-12px);
+  }
+
+  .hero-title-break {
+    display: block;
+  }
+
+  .hero-title-break::before {
+    content: none;
   }
 
   .hero-shell {

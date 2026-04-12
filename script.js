@@ -81,7 +81,8 @@ const translations = {
     heroEyebrow: "Made in Switzerland",
     heroStatus:
       '<span class="hero-status-state">Under development</span><span aria-hidden="true">&middot;</span><span class="hero-status-release">Planned release: end of 2026</span>',
-    heroTitle: "Keep your phone cool in extreme heat.",
+    heroTitle:
+      'Keep your phone<span class="hero-title-break"></span>cool in extreme<span class="hero-title-break"></span>heat.',
     heroText:
       "A premium cooling case concept for pilots, drone operators, field work, gaming, and other sun-exposed situations where heat, glare, throttling, and shutdown risk can interrupt the job.",
     heroPoint1: "Robust enough for harsh outdoor heat and sustained device load",
@@ -222,7 +223,8 @@ const translations = {
     heroEyebrow: "Hergestellt in der Schweiz",
     heroStatus:
       '<span class="hero-status-state">In Entwicklung</span><span aria-hidden="true">&middot;</span><span class="hero-status-release">Geplante Freigabe: Ende 2026</span>',
-    heroTitle: "Halte dein Handy kühl bei extremer Hitze.",
+    heroTitle:
+      'Dein Handy bleibt<span class="hero-title-break"></span>k\u00FChl, auch bei<span class="hero-title-break"></span>extremer Hitze.',
     heroText:
       "Ein hochwertiges Cooling-Case-Konzept für Piloten, Drohnenoperatoren, Ausseneinsätze, Gaming und andere sonnenexponierte Situationen, in denen Hitze, Blendung, Leistungsdrosselung und Abschaltrisiko stören.",
     heroPoint1: "Robust genug für grosse Hitze im Freien und dauerhafte Gerätelast",
@@ -354,7 +356,7 @@ translations.de.pageDescription =
 translations.de.pricingNote =
   "Unverbindliche Konzeptpreise. Endg\u00FCltige Preise k\u00F6nnen sich \u00E4ndern.";
 translations.de.heroTitle =
-  "Handy k\u00FChl bei extremer Hitze.";
+  'Dein Handy bleibt<span class="hero-title-break"></span>k\u00FChl, auch bei<span class="hero-title-break"></span>extremer Hitze.';
 translations.de.heroNote =
   "Nur Konzept. In Entwicklung.";
 translations.de.developmentTitle =
