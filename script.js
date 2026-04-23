@@ -933,16 +933,57 @@ function getCountryDisplayName(countryCode, language = currentLanguage) {
     return "";
   }
 
-  try {
-    const displayNames = new Intl.DisplayNames(
-      [language === "de" ? "de-CH" : "en"],
-      { type: "region" },
-    );
+  const locales = language === "de" ? ["de-CH", "de", "en"] : ["en"];
 
-    return displayNames.of(normalizedCode) || normalizedCode;
-  } catch (error) {
-    return normalizedCode;
+  for (const locale of locales) {
+    try {
+      const displayNames = new Intl.DisplayNames([locale], { type: "region" });
+      const label = String(displayNames.of(normalizedCode) || "").trim();
+
+      if (label) {
+        return label;
+      }
+    } catch (error) {
+      // Try the next locale and fall back to the code if needed.
+    }
   }
+
+  return normalizedCode;
+}
+
+function setOptionText(option, text) {
+  const normalizedText = String(text || "");
+  option.text = normalizedText;
+  option.label = normalizedText;
+  option.textContent = normalizedText;
+}
+
+function getNavigatorCountryCode() {
+  const localeCandidates = [
+    ...(Array.isArray(navigator.languages) ? navigator.languages : []),
+    navigator.language,
+    navigator.userLanguage,
+  ];
+
+  for (const locale of localeCandidates) {
+    const normalizedLocale = String(locale || "").trim().replace(/_/g, "-");
+
+    if (!normalizedLocale) {
+      continue;
+    }
+
+    const segments = normalizedLocale.split("-");
+
+    for (let index = 1; index < segments.length; index += 1) {
+      const segment = segments[index].trim().toUpperCase();
+
+      if (/^[A-Z]{2}$/.test(segment) && COUNTRY_CODES.includes(segment)) {
+        return segment;
+      }
+    }
+  }
+
+  return "";
 }
 
 function populateCountryOptions() {
@@ -962,13 +1003,13 @@ function populateCountryOptions() {
 
   const placeholderOption = document.createElement("option");
   placeholderOption.value = "";
-  placeholderOption.textContent = getText("selectOne");
+  setOptionText(placeholderOption, getText("selectOne"));
   countryInput.appendChild(placeholderOption);
 
   countryOptions.forEach(({ countryCode, label }) => {
     const option = document.createElement("option");
     option.value = countryCode;
-    option.textContent = label;
+    setOptionText(option, label);
     countryInput.appendChild(option);
   });
 
@@ -997,6 +1038,13 @@ function applyDetectedCountrySelection(force = false) {
 async function prefillCountryFromIp() {
   if (!countryInput) {
     return;
+  }
+
+  const navigatorCountryCode = getNavigatorCountryCode();
+
+  if (navigatorCountryCode) {
+    detectedCountryCode = navigatorCountryCode;
+    applyDetectedCountrySelection();
   }
 
   try {
@@ -1113,13 +1161,13 @@ function updateModelOptions() {
 
   const placeholderOption = document.createElement("option");
   placeholderOption.value = "";
-  placeholderOption.textContent = placeholder;
+  setOptionText(placeholderOption, placeholder);
   modelSelect.appendChild(placeholderOption);
 
   modelOptions.forEach((model) => {
     const option = document.createElement("option");
     option.value = model;
-    option.textContent = getModelOptionLabel(model);
+    setOptionText(option, getModelOptionLabel(model));
     modelSelect.appendChild(option);
   });
 

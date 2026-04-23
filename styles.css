@@ -758,6 +758,16 @@ textarea {
     background-color 180ms ease;
 }
 
+select {
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+}
+
+option {
+  color: var(--text);
+  background: #fffdf8;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
