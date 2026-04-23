@@ -320,12 +320,12 @@
     <section class="feedback-section" id="feedback" aria-labelledby="feedback-title">
       <div class="container feedback-grid">
         <div class="section-heading feedback-copy">
-          <p class="section-label" data-i18n="feedbackLabel">Feedback, waitlist and contact</p>
-          <h2 id="feedback-title" data-i18n="feedbackTitle">Stay tuned. We keep you posted.</h2>
+          <p class="section-label" data-i18n="feedbackLabel">Feedback, CHF 15 discount and contact</p>
+          <h2 id="feedback-title" data-i18n="feedbackTitle">Send feedback. Add email for CHF 15 off.</h2>
           <p class="section-text" data-i18n-html="feedbackText">
-            Tell us where overheating gets in the way and which design tradeoffs matter most. If you add an
-            email address, the waitlist flow will reveal the <strong>CHF 15</strong> first-batch incentive and the
-            consent checkbox for updates.
+            Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is only
+            needed if you want the <strong>CHF 15</strong> first-batch discount, and we will send exactly one
+            email: the one that contains the discount.
           </p>
           <div class="feedback-aside">
             <p data-i18n="stressTitle">Typical stress cases</p>
@@ -346,8 +346,8 @@
             <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off">
             <div class="field-group">
               <label for="email">
-                <span data-i18n="emailLabel">Email</span>
-                <span class="optional" data-i18n="emailOptional">(optional)</span>
+                <span data-i18n="emailLabel">Email needed to get CHF 15 off</span>
+                <span class="optional" data-i18n="feedbackEmailOptional">(optional for feedback)</span>
               </label>
               <input
                 id="email"
@@ -359,7 +359,7 @@
                 data-i18n-placeholder="emailPlaceholder"
                 aria-describedby="email-help"
               >
-              <p id="email-help" class="field-hint" data-i18n="emailHelp">Leave blank if you only want to share product feedback.</p>
+              <p id="email-help" class="field-hint" data-i18n="emailHelp">Leave this blank if you only want to send feedback. Add your email only if you want the CHF 15 discount. We will send exactly one email: the one with your discount.</p>
             </div>
 
             <div class="field-row">
@@ -427,16 +427,12 @@
             </div>
 
             <div class="waitlist-panel" id="waitlist-panel" hidden>
-              <p class="waitlist-note" data-i18n-html="waitlistNote">Waitlist users receive <strong>CHF 15</strong> off the first production batch.</p>
-              <label class="consent-row" for="consent">
-                <input id="consent" name="consent" type="checkbox">
-                <span data-i18n="consentText">I agree to receive Cryomanta email updates about development and release timing.</span>
-              </label>
+              <p class="waitlist-note" data-i18n-html="waitlistNote">Your email is only used for one email: the message that contains your <strong>CHF 15</strong> discount.</p>
             </div>
 
             <div class="form-actions">
               <button class="button button-primary" type="submit" data-i18n="submitButton">Send feedback</button>
-              <p class="form-disclaimer" data-i18n="formDisclaimer">Feedback and waitlist flow only. No checkout and no live ordering.</p>
+              <p class="form-disclaimer" data-i18n="formDisclaimer">Add email address only if you want the discount. No checkout and no live ordering.</p>
             </div>
             <p class="field-error form-error" id="form-error" role="alert" hidden data-i18n="formError">There was a problem sending the form. Please try again.</p>
           </form>

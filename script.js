@@ -1,6 +1,5 @@
 const emailInput = document.getElementById("email");
 const waitlistPanel = document.getElementById("waitlist-panel");
-const consentInput = document.getElementById("consent");
 const feedbackForm = document.getElementById("feedback-form");
 const successCard = document.getElementById("success-card");
 const successCopy = document.getElementById("success-copy");
@@ -111,19 +110,21 @@ const translations = {
     devCard3Title: "Impeccable",
     devCard3Text:
       "Built around clean fit, confident grip, durable materials and a premium end result.",
-    feedbackLabel: "Feedback, waitlist and contact",
-    feedbackTitle: "Stay tuned. We keep you posted.",
+    feedbackLabel: "Feedback, CHF 15 discount and contact",
+    feedbackTitle: "Send feedback. Add email for CHF 15 off.",
     feedbackText:
-      "Tell us where overheating gets in the way and which design tradeoffs matter most. If you add an email address, the waitlist flow will reveal the <strong>CHF 15</strong> first-batch incentive and the consent checkbox for updates.",
+      "Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is only needed if you want the <strong>CHF 15</strong> first-batch discount, and we will send exactly one email: the one that contains the discount.",
     stressTitle: "Typical stress cases",
     stress1: "Direct sun on cockpit glass or controller screens",
     stress2: "Brightness throttling and reduced performance during active use",
     stress3: "Shutdown risk when charging, navigating, recording, or gaming outdoors",
     stress4: "Very hot screen surfaces after direct sun exposure",
-    emailLabel: "Email",
+    emailLabel: "Email needed to get CHF 15 off",
+    feedbackEmailOptional: "(optional for feedback)",
     emailOptional: "(optional)",
     emailPlaceholder: "name@example.com",
-    emailHelp: "Leave blank if you only want to share product feedback.",
+    emailHelp:
+      "Leave this blank if you only want to send feedback. Add your email address only if you want the CHF 15 discount. We will send exactly one email: the one with your discount.",
     useCaseLabel: "Main use case",
     selectOne: "Select one",
     useAviation: "Aviation",
@@ -155,21 +156,21 @@ const translations = {
     problemLabel: "Why do you want to solve overheating in your setup?",
     problemPlaceholder:
       "Tell us about a situation where overheating was a problem and why it mattered.",
-    waitlistNote: "Waitlist users receive <strong>CHF 15</strong> off the first production batch.",
-    consentText:
-      "I agree to receive Cryomanta email updates about development and release timing.",
+    waitlistNote:
+      "Your email is only used for one email: the message that contains your <strong>CHF 15</strong> discount.",
     submitButton: "Send feedback",
     submitSending: "Sending...",
-    formDisclaimer: "Feedback and waitlist flow only. No checkout and no live ordering.",
+    formDisclaimer:
+      "Add email only if you want the discount. No checkout and no live ordering.",
     formError: "There was a problem sending the form. Please try again.",
     successLabel: "Thanks",
     successTitle: "Your message has been sent.",
     successBodyDefault:
       "Thanks for sharing your feedback. We will use incoming responses to refine the concept during development.",
     successBodyEmail:
-      "Thanks for joining the waitlist. If you opted in, you may receive development updates and CHF 15 off the first production batch.",
+      "Thanks for your feedback. We will send exactly one email: the one with your CHF 15 discount.",
     successBodyNoEmail:
-      "Thanks for your feedback. If you want updates later, you can submit the form again with your email address.",
+      "Thanks for your feedback. You can submit again later with your email if you want the CHF 15 discount.",
     resetButton: "Send another response",
     faqLabel: "FAQ",
     faqTitle: "Straight answers for an early concept.",
@@ -252,18 +253,20 @@ const translations = {
     devCard3Title: "Makellos",
     devCard3Text:
       "Entwickelt für saubere Passform, sicheren Griff, haltbare Materialien und ein hochwertiges Ergebnis.",
-    feedbackLabel: "Feedback, Warteliste und Kontakt",
-    feedbackTitle: "Hilf, die erste Version zu formen.",
+    feedbackLabel: "Feedback, CHF 15 Rabatt und Kontakt",
+    feedbackTitle: "Feedback senden. E-Mail für CHF 15 Rabatt hinzufügen.",
     feedbackText:
-      "Sag uns, wo Überhitzung stört und welche Designabwägungen am wichtigsten sind. Wenn du eine E-Mail angibst, erscheint der Hinweis auf <strong>CHF 15 Rabatt</strong> für die erste Charge samt Einwilligung für Updates.",
+      "Sag uns, wo Überhitzung stört und welche Designabwägungen am wichtigsten sind. Deine E-Mail ist nur nötig, wenn du den <strong>CHF 15 Rabatt</strong> für die erste Charge möchtest, und wir senden genau eine E-Mail: die mit dem Rabatt.",
     stressTitle: "Typische Belastungsszenarien",
     stress1: "Direkte Sonne auf Cockpitglas oder Controller-Bildschirme",
     stress2: "Helligkeitsdrosselung und weniger Leistung während der Nutzung",
     stress3: "Abschaltrisiko beim Laden, Navigieren, Aufzeichnen oder Gaming im Freien",
-    emailLabel: "E-Mail",
+    emailLabel: "E-Mail für CHF 15 Rabatt sichern",
+    feedbackEmailOptional: "(für Feedback optional)",
     emailOptional: "(optional)",
     emailPlaceholder: "name@beispiel.ch",
-    emailHelp: "Leer lassen, wenn du nur Produktfeedback geben möchtest.",
+    emailHelp:
+      "Leer lassen, wenn du nur Feedback senden möchtest. Trage deine E-Mail nur ein, wenn du den CHF 15 Rabatt möchtest. Wir senden genau eine E-Mail: die mit deinem Rabatt.",
     useCaseLabel: "Hauptanwendung",
     selectOne: "Bitte wählen",
     useAviation: "Luftfahrt",
@@ -293,21 +296,21 @@ const translations = {
     problemLabel: "Welches Überhitzungsproblem soll dieses Produkt für dich lösen?",
     problemPlaceholder:
       "Beschreibe Hitze, Blendung, Leistungsdrosselung, Abdunkeln, Abschalten oder ein Mounting-Problem.",
-    waitlistNote: "Wartelisten-Nutzer erhalten CHF 15 Rabatt auf die erste Produktionscharge.",
-    consentText:
-      "Ich bin einverstanden, E-Mail-Updates zu Entwicklung und Freigabe von Cooling Case zu erhalten.",
+    waitlistNote:
+      "Deine E-Mail wird nur für eine einzige Nachricht verwendet: die E-Mail mit deinem <strong>CHF 15 Rabatt</strong>.",
     submitButton: "Feedback senden",
     submitSending: "Wird gesendet...",
-    formDisclaimer: "Nur Feedback- und Wartelistenablauf. Kein Checkout und keine Live-Bestellung.",
+    formDisclaimer:
+      "Nur Feedback. Trage deine E-Mail nur ein, wenn du den CHF 15 Rabatt möchtest. Kein Checkout und keine Live-Bestellung.",
     formError: "Beim Senden des Formulars ist ein Problem aufgetreten. Bitte versuche es erneut.",
     successLabel: "Danke",
     successTitle: "Deine Nachricht wurde gesendet.",
     successBodyDefault:
       "Danke für dein Feedback. Eingehende Rückmeldungen helfen, das Konzept während der Entwicklung zu verfeinern.",
     successBodyEmail:
-      "Danke für deine Wartelisten-Anmeldung. Mit Einwilligung kannst du Entwicklungsupdates und CHF 15 Rabatt auf die erste Produktionscharge erhalten.",
+      "Danke für dein Feedback. Wir senden genau eine E-Mail: die mit deinem CHF 15 Rabatt.",
     successBodyNoEmail:
-      "Danke für dein Feedback. Wenn du später Updates möchtest, kannst du das Formular erneut mit deiner E-Mail ausfüllen.",
+      "Danke für dein Feedback. Du kannst das Formular später erneut mit deiner E-Mail senden, wenn du den CHF 15 Rabatt möchtest.",
     resetButton: "Weitere Antwort senden",
     faqLabel: "FAQ",
     faqTitle: "Klare Antworten für ein frühes Konzept.",
@@ -364,9 +367,9 @@ translations.de.developmentTitle =
 translations.de.developmentText =
   "Cryomanta ist im Prototyping. Wir verfeinern Einsatzbereiche, K\u00FChlrichtung und Passform vor der ersten Produktionscharge und halten dich \u00FCber die Entwicklung auf dem Laufenden.";
 translations.de.feedbackTitle =
-  "Bleib dran. Wir halten dich auf dem Laufenden.";
+  "Feedback senden. E-Mail für CHF 15 Rabatt hinzufügen.";
 translations.de.feedbackText =
-  "Sag uns, wo \u00DCberhitzung st\u00F6rt und welche Designabw\u00E4gungen am wichtigsten sind. Wenn du eine E-Mail angibst, erscheint der Hinweis auf <strong>CHF 15</strong> f\u00FCr die erste Charge samt Einwilligung f\u00FCr Updates.";
+  "Sag uns, wo \u00DCberhitzung st\u00F6rt und welche Designabw\u00E4gungen am wichtigsten sind. Deine E-Mail ist nur n\u00F6tig, wenn du den <strong>CHF 15 Rabatt</strong> f\u00FCr die erste Charge m\u00F6chtest, und wir senden genau eine E-Mail: die mit dem Rabatt.";
 translations.de.stress4 =
   "Sehr heisse Displayoberfl\u00E4chen nach direkter Sonneneinstrahlung";
 translations.de.removeAfterLabel =
@@ -382,9 +385,7 @@ translations.de.problemLabel =
 translations.de.problemPlaceholder =
   "Erz\u00E4hl uns, was heute passiert, warum es wichtig ist und was deinen Einsatz verbessern w\u00FCrde.";
 translations.de.waitlistNote =
-  "Wartelisten-Nutzer erhalten <strong>CHF 15</strong> Rabatt auf die erste Produktionscharge.";
-translations.de.consentText =
-  "Ich bin einverstanden, E-Mail-Updates zu Entwicklung und Freigabe von Cryomanta zu erhalten.";
+  "Deine E-Mail wird nur f\u00FCr eine einzige Nachricht verwendet: die E-Mail mit deinem <strong>CHF 15 Rabatt</strong>.";
 translations.de.faq1Question = "Wie ist der aktuelle Stand?";
 translations.de.faq1Answer = "Prototyping.";
 translations.de.faq4Question = "Welche Technologie wird verwendet?";
@@ -767,18 +768,12 @@ function applyTranslations(language) {
 }
 
 function updateWaitlistState() {
-  if (!emailInput || !waitlistPanel || !consentInput) {
+  if (!emailInput || !waitlistPanel) {
     return;
   }
 
   const hasEmail = emailInput.value.trim().length > 0;
   waitlistPanel.hidden = !hasEmail;
-  consentInput.required = false;
-
-  if (!hasEmail) {
-    consentInput.checked = false;
-    consentInput.setCustomValidity("");
-  }
 
   requestMobileScrollStageUpdate();
 }
