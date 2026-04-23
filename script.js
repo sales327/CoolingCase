@@ -6,12 +6,21 @@ const successCopy = document.getElementById("success-copy");
 const resetFormButton = document.getElementById("reset-form");
 const submitButton = feedbackForm?.querySelector('button[type="submit"]') || null;
 const formError = document.getElementById("form-error");
+const useCaseSelect = document.getElementById("use-case");
+const useCaseOtherInput = document.getElementById("use-case-other");
+const deviceTypeSelect = document.getElementById("device-type");
+const modelSelect = document.getElementById("device-model");
+const modelOtherInput = document.getElementById("device-model-other");
+const countryInput = document.getElementById("country");
 const contactForm = document.getElementById("contact-form");
 const contactSuccessCard = document.getElementById("contact-success-card");
 const contactResetFormButton = document.getElementById("contact-reset-form");
 const contactSubmitButton = contactForm?.querySelector('button[type="submit"]') || null;
 const contactFormError = document.getElementById("contact-form-error");
 const priorityInputs = Array.from(document.querySelectorAll('input[name="priority"]'));
+const priorityOtherInput = document.getElementById("priority-other");
+const priorityOtherToggle =
+  priorityInputs.find((input) => input.value === "other") || null;
 const priorityError = document.getElementById("priority-error");
 const langButtons = Array.from(document.querySelectorAll(".lang-button"));
 const i18nTextElements = Array.from(document.querySelectorAll("[data-i18n]"));
@@ -30,6 +39,7 @@ const heroSection = document.querySelector(".hero-section");
 const LANGUAGE_KEY = "cooling-case-language";
 const PRIORITY_LIMIT = 3;
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+const COUNTRY_LOOKUP_ENDPOINT = "https://api.country.is/";
 const SITE_URL = "https://cryomanta.com/";
 const ADS_CONVERSION_SEND_TO = "AW-17891805169/lQvpCLbz_ZgcEPGPvdNC";
 const ADS_CONVERSION_VALUE = 1.0;
@@ -62,8 +72,105 @@ const MOBILE_STAGE_DEFINITIONS = [
     itemSelectors: [".faq-item"],
   },
 ];
+const OTHER_OPTION_VALUE = "other";
+// Based on the latest 2026-available sell-through and bestseller data as of April 23, 2026.
+const DEVICE_MODELS_BY_TYPE = {
+  iPhone: [
+    "iPhone 16",
+    "iPhone 17 Pro Max",
+    "iPhone 17",
+    "iPhone 16 Pro Max",
+    "iPhone 17 Pro",
+    "iPhone 16 Pro",
+    "iPhone 16e",
+    "iPhone 15",
+    "iPhone 15 Pro Max",
+    "iPhone 14",
+  ],
+  "Android phone": [
+    "Samsung Galaxy A56",
+    "Samsung Galaxy A36",
+    "Samsung Galaxy A16 5G",
+    "Samsung Galaxy A07",
+    "Samsung Galaxy A06",
+    "Xiaomi Redmi A5",
+    "Xiaomi Redmi 14C",
+    "Samsung Galaxy S25",
+    "Samsung Galaxy S25 Ultra",
+    "Motorola Moto G15",
+  ],
+  iPad: [
+    "iPad 11-inch (A16)",
+    "iPad Air 11-inch (M4)",
+    "iPad Air 11-inch (M3)",
+    "iPad Pro 13-inch (M5)",
+    "iPad Pro 11-inch (M5)",
+    "iPad mini (A17 Pro)",
+    "iPad Air 13-inch (M4)",
+    "iPad (10th gen)",
+    "iPad Pro 11-inch (M4)",
+    "iPad Air 11-inch (M2)",
+  ],
+  "Android tablet": [
+    "Samsung Galaxy Tab A11+",
+    "Samsung Galaxy Tab A9+",
+    "Samsung Galaxy Tab S10 Lite",
+    "Samsung Galaxy Tab S10 FE",
+    "Samsung Galaxy Tab S10+",
+    "Samsung Galaxy Tab S10 Ultra",
+    "Samsung Galaxy Tab S11 Ultra",
+    "Samsung Galaxy Tab S11",
+    "Lenovo Tab One",
+    "Samsung Galaxy Tab S9 FE+",
+  ],
+  "tablet PC": [
+    "HP OmniBook X Flip 14",
+    "HP OmniBook X Flip 16",
+    "Dell Inspiron 14 2-in-1",
+    "Lenovo Yoga 7i 2-in-1",
+    "Lenovo Yoga 7 2-in-1",
+    "Lenovo Yoga Book 9i",
+    "Samsung Galaxy Book5 Pro 360",
+    "Dell Plus 14 2-in-1",
+    "Dell 16 Plus 2-in-1",
+    "LG gram Pro 2-in-1 16",
+  ],
+  laptop: [
+    "MacBook Air 13-inch",
+    "HP 14 Laptop",
+    "Acer Aspire 3 15.6-inch",
+    "Dell Inspiron 15",
+    "HP Chromebook 14",
+    "HP Pavilion 15.6-inch",
+    "Lenovo IdeaPad 3i Chromebook",
+    "Lenovo IdeaPad 1 15.6-inch",
+    "MacBook Air 15-inch",
+    "MacBook Pro 14-inch",
+  ],
+};
+const COUNTRY_CODES = [
+  "AF", "AL", "DZ", "AD", "AO", "AG", "AR", "AM", "AU", "AT", "AZ", "BS",
+  "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR",
+  "BN", "BG", "BF", "BI", "CV", "KH", "CM", "CA", "CF", "TD", "CL", "CN",
+  "CO", "KM", "CG", "CD", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ",
+  "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "SZ", "ET", "FJ", "FI",
+  "FR", "GA", "GM", "GE", "DE", "GH", "GR", "GD", "GT", "GN", "GW", "GY",
+  "HT", "HN", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IL", "IT", "JM",
+  "JP", "JO", "KZ", "KE", "KI", "KP", "KR", "KW", "KG", "LA", "LV", "LB",
+  "LS", "LR", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT",
+  "MH", "MR", "MU", "MX", "FM", "MD", "MC", "MN", "ME", "MA", "MZ", "MM",
+  "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "MK", "NO", "OM", "PK",
+  "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PL", "PT", "QA", "RO", "RU",
+  "RW", "KN", "LC", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL",
+  "SG", "SK", "SI", "SB", "SO", "ZA", "SS", "ES", "LK", "SD", "SR", "SE",
+  "CH", "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR",
+  "TM", "TV", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VA", "VE",
+  "VN", "YE", "ZM", "ZW",
+];
 let currentLanguage = "en";
 let lastSubmissionHadEmail = null;
+let detectedCountryCode = "";
+let lastAutofilledCountryCode = "";
 let mobileScrollStages = [];
 let mobileScrollActive = false;
 let mobileScrollFrame = 0;
@@ -127,11 +234,15 @@ const translations = {
       "Leave this blank if you only want to send feedback. Add your email address only if you want the CHF 15 discount. We will send exactly one email: the one with your discount.",
     useCaseLabel: "Main use case",
     selectOne: "Select one",
-    useAviation: "Aviation",
-    useDrone: "Drone operations",
-    useField: "Field work",
+    useGeneral: "General use",
+    useMovies: "Watching movies",
+    useStreaming: "Streaming",
     useGaming: "Gaming",
+    useDrone: "Flying a drone",
+    useFilming: "Filming",
+    useVfr: "Flying VFR",
     useOther: "Other",
+    useCaseOtherPlaceholder: "Describe your use case",
     deviceTypeLabel: "Device type",
     deviceIphone: "iPhone",
     deviceAndroidPhone: "Android phone",
@@ -139,23 +250,33 @@ const translations = {
     deviceAndroidTablet: "Android tablet",
     deviceTabletPc: "Tablet PC",
     deviceLaptop: "Laptop",
-    removeAfterLabel: "Will you remove the cooling case after every usage?",
+    modelLabel: "Model",
+    modelSelectDeviceType: "Select device type first",
+    modelOtherPlaceholder: "Enter your model",
+    countryLabel: "Country",
+    removeAfterLabel: "Would you be able to leave the cooling case on if it is thin enough (5mm extra thickness)?",
     removeYes: "Yes",
     removeNo: "No",
     removeDepends: "Depends on the situation",
+    priceComfortLabel: "Do you feel comfortable paying 69CHF / 85USD for a smartphone cooling case?",
+    priceComfortYes: "Yes",
+    priceComfortMaybe: "Maybe",
+    priceComfortNo: "No",
     priorityLegend: "Feature priorities",
     priorityHelp: "Choose up to 3.",
-    priorityCooling: "better cooling performance",
-    priorityNoise: "lower noise",
-    prioritySlim: "slimmer size",
-    priorityProtection: "stronger protection",
+    priorityCooling: "extreme cooling performance",
+    priorityNoise: "very low noise",
+    prioritySlim: "slim case",
+    priorityWeight: "lightweight",
+    priorityGrip: "better grip",
+    priorityProtection: "enhanced phone protection / padding",
     priorityBattery: "cooling without external supply",
-    priorityMount: "mount compatibility",
-    priorityColor: "color customisation",
+    priorityMount: "mag safe ring in the back",
+    priorityOtherPlaceholder: "Describe another priority",
     priorityError: "Choose up to 3 feature priorities.",
     problemLabel: "Why do you want to solve overheating in your setup?",
     problemPlaceholder:
-      "Tell us about a situation where overheating was a problem and why it mattered.",
+      "Please describe a situation how overheating occured. This will give me input for the design of the case. What activities on the phone (streaming, gaming, flying a drone, filming), how did you hold the phone (vertically or with both hands), were you at home or outside, screen exposed to the sun. Thanks a lot",
     waitlistNote:
       "Your email is only used for one email: the message that contains your <strong>CHF 15</strong> discount.",
     submitButton: "Send feedback",
@@ -214,10 +335,10 @@ const translations = {
       "<strong>Responsible for this website:</strong><br>Nicola Gurpinar<br>R\u00F6merstrasse 69<br>8404 Winterthur<br>Switzerland<br><br><strong>Email:</strong> <a href=\"mailto:info@cryomanta.com\">info@cryomanta.com</a><br><strong>Project:</strong> Cryomanta<br><br>This website is a concept landing page for Cryomanta. Content is provided for general information about the project and may change during development. No offer in the legal sense is made on this page, and no direct sale is concluded through this website. Despite careful review, no guarantee is given for completeness, accuracy or currentness. Liability for external links and third-party services remains with their respective operators. Unless otherwise stated, all content on this website is provided for the Cryomanta project.",
   },
   de: {
-    pageTitle: "Eiskalt Cooling Case | Konzept für extreme Hitze",
+    pageTitle: "Eiskalt Kühlhülle | Konzept für extreme Hitze",
     pageDescription:
-      "Eiskalt Cooling Case ist ein in der Schweiz gefertigtes Konzept, um Smartphones und Tablets bei grosser Hitze, Blendung und dauerhafter Last nutzbar zu halten.",
-    headerSummary: "Schweizer Cooling-Case-Konzept fÃ¼r zuverlÃ¤ssige Smartphones und Tablets bei extremer Hitze.",
+      "Eiskalt Kühlhülle ist ein in der Schweiz gefertigtes Konzept, um Smartphones und Tablets bei grosser Hitze, Blendung und dauerhafter Last nutzbar zu halten.",
+    headerSummary: "Schweizer Kühlhüllen-Konzept fÃ¼r zuverlÃ¤ssige Smartphones und Tablets bei extremer Hitze.",
     navConcept: "Konzept",
     navFeedback: "Feedback",
     navFaq: "FAQ",
@@ -227,7 +348,7 @@ const translations = {
     heroTitle:
       'Dein Handy bleibt<span class="hero-title-break"></span>k\u00FChl, auch bei<span class="hero-title-break"></span>extremer Hitze.',
     heroText:
-      "Ein hochwertiges Cooling-Case-Konzept für Piloten, Drohnenoperatoren, Ausseneinsätze, Gaming und andere sonnenexponierte Situationen, in denen Hitze, Blendung, Leistungsdrosselung und Abschaltrisiko stören.",
+      "Ein hochwertiges Kühlhüllen-Konzept für Piloten, Drohnenoperatoren, Ausseneinsätze, Gaming und andere sonnenexponierte Situationen, in denen Hitze, Blendung, Leistungsdrosselung und Abschaltrisiko stören.",
     heroPoint1: "Robust genug für grosse Hitze im Freien und dauerhafte Gerätelast",
     heroPoint2: "Erschwinglich genug für reale Einsätze im Alltag und im Feld",
     heroPoint3: "Makellos in Passform, Haptik und Zuverlässigkeit unter Belastung",
@@ -243,7 +364,7 @@ const translations = {
     developmentLabel: "In Entwicklung",
     developmentTitle: "Entwicklung vor der Produktion.",
     developmentText:
-      "Cooling Case befindet sich noch in Entwicklung. Diese Seite erklärt das Konzept, sammelt Feedback zu Überhitzungsproblemen und hilft bei der Priorisierung der ersten Produktionscharge.",
+      "Die Kühlhülle befindet sich noch in Entwicklung. Diese Seite erklärt das Konzept, sammelt Feedback zu Überhitzungsproblemen und hilft bei der Priorisierung der ersten Produktionscharge.",
     devCard1Title: "Robust",
     devCard1Text:
       "Ausgelegt für direkte Sonne, dauerhafte Last und härtere Outdoor-Bedingungen.",
@@ -269,11 +390,19 @@ const translations = {
       "Leer lassen, wenn du nur Feedback senden möchtest. Trage deine E-Mail nur ein, wenn du den CHF 15 Rabatt möchtest. Wir senden genau eine E-Mail: die mit deinem Rabatt.",
     useCaseLabel: "Hauptanwendung",
     selectOne: "Bitte wählen",
-    useAviation: "Luftfahrt",
-    useDrone: "Drohnenbetrieb",
-    useField: "Ausseneinsatz",
+    useGeneral: "Allgemeine Nutzung",
+    useMovies: "Filme schauen",
+    useStreaming: "Streaming",
     useGaming: "Gaming",
+    useDrone: "Drohnenflug",
+    useFilming: "Filmen",
+    useVfr: "VFR-Flug",
     useOther: "Andere",
+    useCaseOtherPlaceholder: "Beschreibe deinen Einsatzbereich",
+    modelLabel: "Modell",
+    modelSelectDeviceType: "Zuerst Ger\u00E4tetyp w\u00E4hlen",
+    modelOtherPlaceholder: "Modell eingeben",
+    countryLabel: "Land",
     deviceTypeLabel: "Gerätetyp",
     deviceIphone: "iPhone",
     deviceAndroidPhone: "Android-Handy",
@@ -290,12 +419,13 @@ const translations = {
     priorityGrip: "besserer Halt",
     priorityProtection: "stärkerer Schutz",
     priorityBattery: "bessere Batterieeffizienz",
+    priorityOtherPlaceholder: "Andere Priorit\u00E4t beschreiben",
     priorityOutdoor: "Outdoor- und Sonnenlicht-Tauglichkeit",
     priorityMount: "Mount-Kompatibilität",
     priorityError: "Bitte höchstens 3 Prioritäten wählen.",
     problemLabel: "Welches Überhitzungsproblem soll dieses Produkt für dich lösen?",
     problemPlaceholder:
-      "Beschreibe Hitze, Blendung, Leistungsdrosselung, Abdunkeln, Abschalten oder ein Mounting-Problem.",
+      "Bitte beschreibe eine Situation, in der \u00DCberhitzung aufgetreten ist. Das gibt mir Input f\u00FCr das Design der H\u00FClle. Welche Aktivit\u00E4ten auf dem Handy hast du gemacht (Streaming, Gaming, Drohne fliegen, Filmen), wie hast du das Handy gehalten (vertikal oder mit beiden H\u00E4nden), warst du zu Hause oder draussen, war der Bildschirm der Sonne ausgesetzt. Vielen Dank.",
     waitlistNote:
       "Deine E-Mail wird nur für eine einzige Nachricht verwendet: die E-Mail mit deinem <strong>CHF 15 Rabatt</strong>.",
     submitButton: "Feedback senden",
@@ -343,19 +473,21 @@ const translations = {
     contactResetButton: "Weitere Nachricht senden",
     privacyTitle: "Datenschutz",
     privacyBody:
-      "Diese Website präsentiert das Cooling-Case-Konzept und verarbeitet Feedback- oder Wartelistenanfragen. Bei Nutzung des Formulars können insbesondere E-Mail-Adresse, Einsatzbereich, Gerätetyp, gewählte Prioritäten und Nachricht übermittelt werden. Formularanfragen werden über Web3Forms verarbeitet und an das konfigurierte Postfach zugestellt. Die übermittelten Daten werden ausschliesslich zur Beantwortung von Anfragen, zur Verwaltung der Warteliste und zur Unterstützung der Produktentwicklung verwendet. Die gewählte Sprache wird lokal im Browser gespeichert, damit die Seite deine Präferenz behalten kann. Du kannst Auskunft, Berichtigung oder Löschung deiner übermittelten Daten verlangen, indem du das Kontaktformular erneut nutzt und die zuvor verwendete E-Mail-Adresse nennst.",
+      "Diese Website präsentiert das Kühlhüllen-Konzept und verarbeitet Feedback- oder Wartelistenanfragen. Bei Nutzung des Formulars können insbesondere E-Mail-Adresse, Einsatzbereich, Gerätetyp, gewählte Prioritäten und Nachricht übermittelt werden. Formularanfragen werden über Web3Forms verarbeitet und an das konfigurierte Postfach zugestellt. Die übermittelten Daten werden ausschliesslich zur Beantwortung von Anfragen, zur Verwaltung der Warteliste und zur Unterstützung der Produktentwicklung verwendet. Die gewählte Sprache wird lokal im Browser gespeichert, damit die Seite deine Präferenz behalten kann. Du kannst Auskunft, Berichtigung oder Löschung deiner übermittelten Daten verlangen, indem du das Kontaktformular erneut nutzt und die zuvor verwendete E-Mail-Adresse nennst.",
     legalTitle: "Impressum",
     legalBody:
-      "<strong>Verantwortlich:</strong> Nicola Gurpinar, Schweiz.<br><strong>Kontakt:</strong> über das Kontaktformular auf dieser Seite.<br>Diese Website ist eine Konzept-Landingpage für Eiskalt Cooling Case. Inhalte dienen der allgemeinen Information zum Projektstand und können sich während der Entwicklung ändern. Für externe Links und Dienste Dritter sind ausschliesslich deren Betreiber verantwortlich.",
+      "<strong>Verantwortlich:</strong> Nicola Gurpinar, Schweiz.<br><strong>Kontakt:</strong> über das Kontaktformular auf dieser Seite.<br>Diese Website ist eine Konzept-Landingpage für Eiskalt Kühlhülle. Inhalte dienen der allgemeinen Information zum Projektstand und können sich während der Entwicklung ändern. Für externe Links und Dienste Dritter sind ausschliesslich deren Betreiber verantwortlich.",
   },
 };
 
 translations.de.headerSummary =
-  "Schweizer Cooling f\u00FCr Smartphones und Tablets bei extremer Hitze.";
+  "Schweizer K\u00FChlh\u00FCllen f\u00FCr Smartphones und Tablets bei extremer Hitze.";
 translations.de.pageTitle =
   "Cryomanta | K\u00FChlung f\u00FCr Handy und Tablet bei extremer Hitze";
 translations.de.pageDescription =
-  "Cryomanta ist ein Schweizer Cooling-Case-Konzept f\u00FCr Smartphones und Tablets bei extremer Hitze, Blendung, Drosselung und Abschaltrisiko im Ausseneinsatz.";
+  "Cryomanta ist ein Schweizer K\u00FChlh\u00FCllen-Konzept f\u00FCr Smartphones und Tablets bei extremer Hitze, Blendung, Drosselung und Abschaltrisiko im Ausseneinsatz.";
+translations.de.heroText =
+  "Ein hochwertiges K\u00FChlh\u00FCllen-Konzept f\u00FCr Piloten, Drohnenoperatoren, Ausseneins\u00E4tze, Gaming und andere sonnenexponierte Situationen, in denen Hitze, Blendung, Leistungsdrosselung und Abschaltrisiko st\u00F6ren.";
 translations.de.pricingNote =
   "Unverbindliche Konzeptpreise. Endg\u00FCltige Preise k\u00F6nnen sich \u00E4ndern.";
 translations.de.heroTitle =
@@ -373,17 +505,28 @@ translations.de.feedbackText =
 translations.de.stress4 =
   "Sehr heisse Displayoberfl\u00E4chen nach direkter Sonneneinstrahlung";
 translations.de.removeAfterLabel =
-  "Wirst du das Cooling Case nach jeder Nutzung wieder entfernen?";
+  "W\u00E4rst du in der Lage, die K\u00FChlh\u00FClle am Ger\u00E4t zu lassen, wenn sie d\u00FCnn genug ist (5 mm zus\u00E4tzliche Dicke)?";
 translations.de.removeYes = "Ja";
 translations.de.removeNo = "Nein";
 translations.de.removeDepends = "Kommt auf die Situation an";
+translations.de.priceComfortLabel =
+  "F\u00FChlst du dich wohl dabei, 69CHF / 85USD f\u00FCr eine Smartphone-K\u00FChlh\u00FClle zu bezahlen?";
+translations.de.priceComfortYes = "Ja";
+translations.de.priceComfortMaybe = "Vielleicht";
+translations.de.priceComfortNo = "Nein";
+translations.de.priorityCooling = "extreme K\u00FChlleistung";
+translations.de.priorityNoise = "sehr leise";
+translations.de.prioritySlim = "schlanke H\u00FClle";
+translations.de.priorityWeight = "leicht";
+translations.de.priorityGrip = "besserer Halt";
+translations.de.priorityProtection = "verbesserter Schutz / Polsterung";
 translations.de.priorityBattery =
   "K\u00FChlung ohne externe Stromversorgung";
-translations.de.priorityColor = "Farbindividualisierung";
+translations.de.priorityMount = "MagSafe-Ring auf der R\u00FCckseite";
 translations.de.problemLabel =
   "Warum willst du \u00DCberhitzung in deinem Setup l\u00F6sen?";
 translations.de.problemPlaceholder =
-  "Erz\u00E4hl uns, was heute passiert, warum es wichtig ist und was deinen Einsatz verbessern w\u00FCrde.";
+  "Bitte beschreibe eine Situation, in der \u00DCberhitzung aufgetreten ist. Das gibt mir Input f\u00FCr das Design der H\u00FClle. Welche Aktivit\u00E4ten auf dem Handy hast du gemacht (Streaming, Gaming, Drohne fliegen, Filmen), wie hast du das Handy gehalten (vertikal oder mit beiden H\u00E4nden), warst du zu Hause oder draussen, war der Bildschirm der Sonne ausgesetzt. Vielen Dank.";
 translations.de.waitlistNote =
   "Deine E-Mail wird nur f\u00FCr eine einzige Nachricht verwendet: die E-Mail mit deinem <strong>CHF 15 Rabatt</strong>.";
 translations.de.faq1Question = "Wie ist der aktuelle Stand?";
@@ -757,6 +900,11 @@ function applyTranslations(language) {
   });
 
   updateSuccessBody();
+  updateUseCaseOtherState();
+  updatePriorityOtherState();
+  updateModelOptions();
+  populateCountryOptions();
+  applyDetectedCountrySelection();
   validatePriorityLimit();
   requestMobileScrollStageUpdate();
 
@@ -776,6 +924,252 @@ function updateWaitlistState() {
   waitlistPanel.hidden = !hasEmail;
 
   requestMobileScrollStageUpdate();
+}
+
+function getCountryDisplayName(countryCode, language = currentLanguage) {
+  const normalizedCode = String(countryCode || "").trim().toUpperCase();
+
+  if (!normalizedCode) {
+    return "";
+  }
+
+  try {
+    const displayNames = new Intl.DisplayNames(
+      [language === "de" ? "de-CH" : "en"],
+      { type: "region" },
+    );
+
+    return displayNames.of(normalizedCode) || normalizedCode;
+  } catch (error) {
+    return normalizedCode;
+  }
+}
+
+function populateCountryOptions() {
+  if (!countryInput) {
+    return;
+  }
+
+  const currentValue = String(countryInput.value || "").trim().toUpperCase();
+  const countryOptions = COUNTRY_CODES
+    .map((countryCode) => ({
+      countryCode,
+      label: getCountryDisplayName(countryCode),
+    }))
+    .sort((left, right) => left.label.localeCompare(right.label, currentLanguage));
+
+  countryInput.innerHTML = "";
+
+  const placeholderOption = document.createElement("option");
+  placeholderOption.value = "";
+  placeholderOption.textContent = getText("selectOne");
+  countryInput.appendChild(placeholderOption);
+
+  countryOptions.forEach(({ countryCode, label }) => {
+    const option = document.createElement("option");
+    option.value = countryCode;
+    option.textContent = label;
+    countryInput.appendChild(option);
+  });
+
+  if (COUNTRY_CODES.includes(currentValue)) {
+    countryInput.value = currentValue;
+  }
+}
+
+function applyDetectedCountrySelection(force = false) {
+  if (!countryInput || !detectedCountryCode) {
+    return;
+  }
+
+  const currentValue = String(countryInput.value || "").trim().toUpperCase();
+  const isAutofilledValue =
+    currentValue === "" || currentValue === lastAutofilledCountryCode;
+
+  if (!force && !isAutofilledValue) {
+    return;
+  }
+
+  countryInput.value = detectedCountryCode;
+  lastAutofilledCountryCode = detectedCountryCode;
+}
+
+async function prefillCountryFromIp() {
+  if (!countryInput) {
+    return;
+  }
+
+  try {
+    const response = await fetch(COUNTRY_LOOKUP_ENDPOINT, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Country lookup failed with status ${response.status}`);
+    }
+
+    const result = await response.json();
+    const countryCode = String(result.country || "").trim().toUpperCase();
+
+    if (!countryCode) {
+      return;
+    }
+
+    detectedCountryCode = countryCode;
+    applyDetectedCountrySelection();
+  } catch (error) {
+    // Ignore lookup issues and leave the field editable.
+  }
+}
+
+function updateUseCaseOtherState(shouldFocus = false) {
+  if (!useCaseSelect || !useCaseOtherInput) {
+    return;
+  }
+
+  const isOtherSelected = useCaseSelect.value === OTHER_OPTION_VALUE;
+
+  useCaseOtherInput.hidden = !isOtherSelected;
+  useCaseOtherInput.disabled = !isOtherSelected;
+  useCaseOtherInput.required = isOtherSelected;
+
+  if (!isOtherSelected) {
+    useCaseOtherInput.value = "";
+  } else if (shouldFocus) {
+    useCaseOtherInput.focus();
+  }
+
+  requestMobileScrollStageUpdate();
+}
+
+function updatePriorityOtherState(shouldFocus = false) {
+  if (!priorityOtherInput || !priorityOtherToggle) {
+    return;
+  }
+
+  const isOtherSelected = priorityOtherToggle.checked;
+
+  priorityOtherInput.hidden = !isOtherSelected;
+  priorityOtherInput.disabled = !isOtherSelected;
+  priorityOtherInput.required = isOtherSelected;
+
+  if (!isOtherSelected) {
+    priorityOtherInput.value = "";
+  } else if (shouldFocus) {
+    priorityOtherInput.focus();
+  }
+
+  requestMobileScrollStageUpdate();
+}
+
+function updateModelOtherState(shouldFocus = false) {
+  if (!modelSelect || !modelOtherInput) {
+    return;
+  }
+
+  const isOtherSelected = modelSelect.value === OTHER_OPTION_VALUE;
+
+  modelOtherInput.hidden = !isOtherSelected;
+  modelOtherInput.disabled = !isOtherSelected;
+  modelOtherInput.required = isOtherSelected;
+
+  if (!isOtherSelected) {
+    modelOtherInput.value = "";
+  } else if (shouldFocus) {
+    modelOtherInput.focus();
+  }
+
+  requestMobileScrollStageUpdate();
+}
+
+function getModelOptionLabel(model) {
+  if (model === OTHER_OPTION_VALUE) {
+    return getText("useOther");
+  }
+
+  if (currentLanguage !== "de") {
+    return model;
+  }
+
+  return String(model)
+    .replace(/-inch\b/g, "-Zoll")
+    .replace(/\binch\b/g, "Zoll");
+}
+
+function updateModelOptions() {
+  if (!modelSelect) {
+    return;
+  }
+
+  const deviceType = deviceTypeSelect?.value || "";
+  const currentValue = modelSelect.value;
+  const models = DEVICE_MODELS_BY_TYPE[deviceType] || [];
+  const modelOptions = deviceType ? [...models, OTHER_OPTION_VALUE] : [];
+  const placeholder = deviceType ? getText("selectOne") : getText("modelSelectDeviceType");
+
+  modelSelect.innerHTML = "";
+
+  const placeholderOption = document.createElement("option");
+  placeholderOption.value = "";
+  placeholderOption.textContent = placeholder;
+  modelSelect.appendChild(placeholderOption);
+
+  modelOptions.forEach((model) => {
+    const option = document.createElement("option");
+    option.value = model;
+    option.textContent = getModelOptionLabel(model);
+    modelSelect.appendChild(option);
+  });
+
+  modelSelect.disabled = modelOptions.length === 0;
+  modelSelect.value = modelOptions.includes(currentValue) ? currentValue : "";
+  updateModelOtherState();
+}
+
+function normalizeFeedbackFormData(formData) {
+  const useCase = String(formData.get("useCase") || "").trim();
+  const useCaseOther = String(formData.get("useCaseOther") || "").trim();
+  const deviceModel = String(formData.get("deviceModel") || "").trim();
+  const deviceModelOther = String(formData.get("deviceModelOther") || "").trim();
+  const countryCode = String(formData.get("country") || "").trim().toUpperCase();
+
+  if (useCase === OTHER_OPTION_VALUE && useCaseOther) {
+    formData.set("useCase", useCaseOther);
+  }
+
+  formData.delete("useCaseOther");
+
+  if (deviceModel === OTHER_OPTION_VALUE && deviceModelOther) {
+    formData.set("deviceModel", deviceModelOther);
+  }
+
+  formData.delete("deviceModelOther");
+
+  if (countryCode) {
+    formData.set("country", getCountryDisplayName(countryCode, "en"));
+  }
+
+  const priorities = formData.getAll("priority").map((value) => String(value).trim());
+
+  if (priorities.includes(OTHER_OPTION_VALUE)) {
+    const priorityOther = String(formData.get("priorityOther") || "").trim();
+
+    formData.delete("priority");
+
+    priorities.forEach((priority) => {
+      if (priority && priority !== OTHER_OPTION_VALUE) {
+        formData.append("priority", priority);
+      }
+    });
+
+    if (priorityOther) {
+      formData.append("priority", priorityOther);
+    }
+  }
+
+  formData.delete("priorityOther");
 }
 
 function validatePriorityLimit() {
@@ -993,6 +1387,11 @@ function resetPrototypeForm() {
   }
 
   updateWaitlistState();
+  updateUseCaseOtherState();
+  updatePriorityOtherState();
+  updateModelOptions();
+  populateCountryOptions();
+  applyDetectedCountrySelection(true);
   validatePriorityLimit();
   updateSuccessBody();
   requestMobileScrollStageUpdate();
@@ -1029,8 +1428,27 @@ if (emailInput) {
   updateWaitlistState();
 }
 
+if (useCaseSelect) {
+  useCaseSelect.addEventListener("change", () => {
+    updateUseCaseOtherState(useCaseSelect.value === OTHER_OPTION_VALUE);
+  });
+}
+
+if (deviceTypeSelect) {
+  deviceTypeSelect.addEventListener("change", updateModelOptions);
+}
+
+if (modelSelect) {
+  modelSelect.addEventListener("change", () => {
+    updateModelOtherState(modelSelect.value === OTHER_OPTION_VALUE);
+  });
+}
+
 priorityInputs.forEach((input) => {
-  input.addEventListener("change", validatePriorityLimit);
+  input.addEventListener("change", () => {
+    validatePriorityLimit();
+    updatePriorityOtherState(input.value === OTHER_OPTION_VALUE && input.checked);
+  });
 });
 
 langButtons.forEach((button) => {
@@ -1055,6 +1473,7 @@ if (feedbackForm) {
     }
 
     const formData = new FormData(feedbackForm);
+    normalizeFeedbackFormData(formData);
     const email = String(formData.get("email") || "").trim();
     const originalSubmitLabel = submitButton?.textContent || "";
 
@@ -1074,6 +1493,11 @@ if (feedbackForm) {
       successCard.focus();
       feedbackForm.reset();
       updateWaitlistState();
+      updateUseCaseOtherState();
+      updatePriorityOtherState();
+      updateModelOptions();
+      populateCountryOptions();
+      applyDetectedCountrySelection(true);
       validatePriorityLimit();
       requestMobileScrollStageUpdate();
     } catch (error) {
@@ -1183,3 +1607,4 @@ try {
 
 applyTranslations(initialLanguage);
 syncMobileScrollStages();
+prefillCountryFromIp();

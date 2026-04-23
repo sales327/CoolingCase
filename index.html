@@ -367,12 +367,25 @@
                 <label for="use-case" data-i18n="useCaseLabel">Main use case</label>
                 <select id="use-case" name="useCase">
                   <option value="" data-i18n="selectOne">Select one</option>
-                  <option value="aviation" data-i18n="useAviation">Aviation</option>
-                  <option value="drone operations" data-i18n="useDrone">Drone operations</option>
-                  <option value="field work" data-i18n="useField">Field work</option>
+                  <option value="general use" data-i18n="useGeneral">General use</option>
+                  <option value="watching movies" data-i18n="useMovies">Watching movies</option>
+                  <option value="streaming" data-i18n="useStreaming">Streaming</option>
                   <option value="gaming" data-i18n="useGaming">Gaming</option>
+                  <option value="flying a drone" data-i18n="useDrone">Flying a drone</option>
+                  <option value="filming" data-i18n="useFilming">Filming</option>
+                  <option value="flying VFR" data-i18n="useVfr">Flying VFR</option>
                   <option value="other" data-i18n="useOther">Other</option>
                 </select>
+                <input
+                  id="use-case-other"
+                  name="useCaseOther"
+                  type="text"
+                  placeholder="Describe your use case"
+                  data-i18n-placeholder="useCaseOtherPlaceholder"
+                  aria-label="Specify your use case"
+                  hidden
+                  disabled
+                >
               </div>
 
               <div class="field-group">
@@ -389,29 +402,81 @@
               </div>
             </div>
 
-            <div class="field-group">
-              <label for="remove-after-use" data-i18n="removeAfterLabel">Will you remove the cooling case after every usage?</label>
-              <select id="remove-after-use" name="removeAfterUse">
-                <option value="" data-i18n="selectOne">Select one</option>
-                <option value="yes" data-i18n="removeYes">Yes</option>
-                <option value="no" data-i18n="removeNo">No</option>
-                <option value="depends" data-i18n="removeDepends">Depends on the situation</option>
-              </select>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="country" data-i18n="countryLabel">Country</label>
+                <select
+                  id="country"
+                  name="country"
+                >
+                  <option value="" data-i18n="selectOne">Select one</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="device-model" data-i18n="modelLabel">Model</label>
+                <select id="device-model" name="deviceModel" disabled>
+                  <option value="" data-i18n="modelSelectDeviceType">Select device type first</option>
+                </select>
+                <input
+                  id="device-model-other"
+                  name="deviceModelOther"
+                  type="text"
+                  placeholder="Enter your model"
+                  data-i18n-placeholder="modelOtherPlaceholder"
+                  aria-label="Specify your device model"
+                  hidden
+                  disabled
+                >
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label for="remove-after-use" data-i18n="removeAfterLabel">Would you be able to leave the cooling case on if it is thin enough (5mm extra thickness)?</label>
+                <select id="remove-after-use" name="removeAfterUse">
+                  <option value="" data-i18n="selectOne">Select one</option>
+                  <option value="yes" data-i18n="removeYes">Yes</option>
+                  <option value="no" data-i18n="removeNo">No</option>
+                  <option value="depends" data-i18n="removeDepends">Depends on the situation</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="price-comfort" data-i18n="priceComfortLabel">Do you feel comfortable paying 69CHF / 85USD for a smartphone cooling case?</label>
+                <select id="price-comfort" name="priceComfort">
+                  <option value="" data-i18n="selectOne">Select one</option>
+                  <option value="yes" data-i18n="priceComfortYes">Yes</option>
+                  <option value="maybe" data-i18n="priceComfortMaybe">Maybe</option>
+                  <option value="no" data-i18n="priceComfortNo">No</option>
+                </select>
+              </div>
             </div>
 
             <fieldset class="field-group" aria-describedby="priority-help priority-error">
               <legend data-i18n="priorityLegend">Feature priorities</legend>
               <p class="field-hint" id="priority-help" data-i18n="priorityHelp">Choose up to 3.</p>
               <div class="check-grid">
-                <label class="check-card"><input type="checkbox" name="priority" value="better cooling performance"><span data-i18n="priorityCooling">better cooling performance</span></label>
-                <label class="check-card"><input type="checkbox" name="priority" value="lower noise"><span data-i18n="priorityNoise">lower noise</span></label>
-                <label class="check-card"><input type="checkbox" name="priority" value="slimmer size"><span data-i18n="prioritySlim">slimmer size</span></label>
-                <label class="check-card"><input type="checkbox" name="priority" value="stronger protection"><span data-i18n="priorityProtection">stronger protection</span></label>
+                <label class="check-card"><input type="checkbox" name="priority" value="extreme cooling performance"><span data-i18n="priorityCooling">extreme cooling performance</span></label>
+                <label class="check-card"><input type="checkbox" name="priority" value="very low noise"><span data-i18n="priorityNoise">very low noise</span></label>
+                <label class="check-card"><input type="checkbox" name="priority" value="slim case"><span data-i18n="prioritySlim">slim case</span></label>
+                <label class="check-card"><input type="checkbox" name="priority" value="lightweight"><span data-i18n="priorityWeight">lightweight</span></label>
+                <label class="check-card"><input type="checkbox" name="priority" value="better grip"><span data-i18n="priorityGrip">better grip</span></label>
+                <label class="check-card"><input type="checkbox" name="priority" value="enhanced phone protection / padding"><span data-i18n="priorityProtection">enhanced phone protection / padding</span></label>
                 <label class="check-card"><input type="checkbox" name="priority" value="cooling without external supply"><span data-i18n="priorityBattery">cooling without external supply</span></label>
-                <label class="check-card"><input type="checkbox" name="priority" value="mount compatibility"><span data-i18n="priorityMount">mount compatibility</span></label>
-                <label class="check-card"><input type="checkbox" name="priority" value="color customisation"><span data-i18n="priorityColor">color customisation</span></label>
+                <label class="check-card"><input type="checkbox" name="priority" value="mag safe ring in the back"><span data-i18n="priorityMount">mag safe ring in the back</span></label>
                 <label class="check-card"><input type="checkbox" name="priority" value="other"><span data-i18n="useOther">Other</span></label>
               </div>
+              <input
+                id="priority-other"
+                name="priorityOther"
+                type="text"
+                placeholder="Describe another priority"
+                data-i18n-placeholder="priorityOtherPlaceholder"
+                aria-label="Specify another feature priority"
+                hidden
+                disabled
+              >
               <p class="field-error" id="priority-error" role="alert" hidden data-i18n="priorityError">Choose up to 3 feature priorities.</p>
             </fieldset>
 
