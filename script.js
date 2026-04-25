@@ -209,7 +209,7 @@ const translations = {
     developmentTitle: "Development before the first batch.",
     developmentText:
       "Cryomanta is in prototyping. We are refining use cases, cooling direction and fit before the first production batch, and we will keep you posted as development progresses.",
-    devCard1Title: "Robust",
+    devCard1Title: "Reliable",
     devCard1Text:
       "Designed to stay dependable under direct sun, sustained load and rougher outdoor handling.",
     devCard2Title: "Affordable",
@@ -366,7 +366,7 @@ const translations = {
     developmentTitle: "Entwicklung vor der Produktion.",
     developmentText:
       "Die Kühlhülle befindet sich noch in Entwicklung. Diese Seite erklärt das Konzept, sammelt Feedback zu Überhitzungsproblemen und hilft bei der Priorisierung der ersten Produktionscharge.",
-    devCard1Title: "Robust",
+    devCard1Title: "Zuverlässig",
     devCard1Text:
       "Ausgelegt für direkte Sonne, dauerhafte Last und härtere Outdoor-Bedingungen.",
     devCard2Title: "Erschwinglich",
