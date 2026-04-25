@@ -321,10 +321,10 @@
       <div class="container feedback-grid">
         <div class="section-heading feedback-copy">
           <p class="section-label" data-i18n="feedbackLabel">Feedback, CHF 15 discount and contact</p>
-          <h2 id="feedback-title" data-i18n="feedbackTitle">Send feedback. Add email for CHF 15 off.</h2>
+          <h2 id="feedback-title" data-i18n="feedbackTitle">Get on the waiting list and get CHF 15 ($18) off.</h2>
           <p class="section-text" data-i18n-html="feedbackText">
-            Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is only
-            needed if you want the <strong>CHF 15</strong> first-batch discount, and we will send exactly one
+            Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is
+            required so we can send your <strong>CHF 15</strong> first-batch discount, and we will send exactly one
             email: the one that contains the discount.
           </p>
           <div class="feedback-aside">
@@ -346,8 +346,8 @@
             <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off">
             <div class="field-group">
               <label for="email">
-                <span data-i18n="emailLabel">Email needed to get CHF 15 off</span>
-                <span class="optional" data-i18n="feedbackEmailOptional">(optional for feedback)</span>
+                <span data-i18n="emailLabel">Email required to get CHF 15 off</span>
+                <span class="optional" data-i18n="feedbackEmailOptional">(required)</span>
               </label>
               <input
                 id="email"
@@ -355,11 +355,12 @@
                 type="email"
                 inputmode="email"
                 autocomplete="email"
+                required
                 placeholder="name@example.com"
                 data-i18n-placeholder="emailPlaceholder"
                 aria-describedby="email-help"
               >
-              <p id="email-help" class="field-hint" data-i18n="emailHelp">Leave this blank if you only want to send feedback. Add your email only if you want the CHF 15 discount. We will send exactly one email: the one with your discount.</p>
+              <p id="email-help" class="field-hint" data-i18n="emailHelp">Enter your email so we can send your CHF 15 discount. We will send exactly one email: the one with your discount.</p>
             </div>
 
             <div class="field-row">
@@ -433,7 +434,7 @@
 
             <div class="field-row">
               <div class="field-group">
-                <label for="remove-after-use" data-i18n="removeAfterLabel">Would you be able to leave the cooling case on if it is thin enough (5mm extra thickness)?</label>
+                <label for="remove-after-use" data-i18n="removeAfterLabel">Would you leave the case on permanently if it was thin enough (5mm extra thickness)?</label>
                 <select id="remove-after-use" name="removeAfterUse">
                   <option value="" data-i18n="selectOne">Select one</option>
                   <option value="yes" data-i18n="removeYes">Yes</option>
@@ -443,7 +444,7 @@
               </div>
 
               <div class="field-group">
-                <label for="price-comfort" data-i18n="priceComfortLabel">Do you feel comfortable paying 69CHF / 85USD for a smartphone cooling case?</label>
+                <label for="price-comfort" data-i18n="priceComfortLabel">Would you feel comfortable paying CHF 69 / $85 for a smartphone cooling case?</label>
                 <select id="price-comfort" name="priceComfort">
                   <option value="" data-i18n="selectOne">Select one</option>
                   <option value="yes" data-i18n="priceComfortYes">Yes</option>
@@ -497,7 +498,7 @@
 
             <div class="form-actions">
               <button class="button button-primary" type="submit" data-i18n="submitButton">Send feedback</button>
-              <p class="form-disclaimer" data-i18n="formDisclaimer">Add email address only if you want the discount. No checkout and no live ordering.</p>
+              <p class="form-disclaimer" data-i18n="formDisclaimer">Email is required so we can send the discount. No checkout and no live ordering.</p>
             </div>
             <p class="field-error form-error" id="form-error" role="alert" hidden data-i18n="formError">There was a problem sending the form. Please try again.</p>
           </form>

@@ -218,20 +218,20 @@ const translations = {
     devCard3Text:
       "Built around clean fit, confident grip, durable materials and a premium end result.",
     feedbackLabel: "Feedback, CHF 15 discount and contact",
-    feedbackTitle: "Send feedback. Add email for CHF 15 off.",
+    feedbackTitle: "Get on the waiting list and get CHF 15 ($18) off.",
     feedbackText:
-      "Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is only needed if you want the <strong>CHF 15</strong> first-batch discount, and we will send exactly one email: the one that contains the discount.",
+      "Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is required so we can send your <strong>CHF 15</strong> first-batch discount, and we will send exactly one email: the one that contains the discount.",
     stressTitle: "Typical stress cases",
     stress1: "Direct sun on cockpit glass or controller screens",
     stress2: "Brightness throttling and reduced performance during active use",
     stress3: "Shutdown risk when charging, navigating, recording, or gaming outdoors",
     stress4: "Very hot screen surfaces after direct sun exposure",
-    emailLabel: "Email needed to get CHF 15 off",
-    feedbackEmailOptional: "(optional for feedback)",
+    emailLabel: "Email required to get CHF 15 off",
+    feedbackEmailOptional: "(required)",
     emailOptional: "(optional)",
     emailPlaceholder: "name@example.com",
     emailHelp:
-      "Leave this blank if you only want to send feedback. Add your email address only if you want the CHF 15 discount. We will send exactly one email: the one with your discount.",
+      "Enter your email so we can send your CHF 15 discount. We will send exactly one email: the one with your discount.",
     useCaseLabel: "Main use case",
     selectOne: "Select one",
     useGeneral: "General use",
@@ -254,11 +254,11 @@ const translations = {
     modelSelectDeviceType: "Select device type first",
     modelOtherPlaceholder: "Enter your model",
     countryLabel: "Country",
-    removeAfterLabel: "Would you be able to leave the cooling case on if it is thin enough (5mm extra thickness)?",
+    removeAfterLabel: "Would you leave the case on permanently if it was thin enough (5mm extra thickness)?",
     removeYes: "Yes",
     removeNo: "No",
     removeDepends: "Depends on the situation",
-    priceComfortLabel: "Do you feel comfortable paying 69CHF / 85USD for a smartphone cooling case?",
+    priceComfortLabel: "Would you feel comfortable paying CHF 69 / $85 for a smartphone cooling case?",
     priceComfortYes: "Yes",
     priceComfortMaybe: "Maybe",
     priceComfortNo: "No",
@@ -282,7 +282,7 @@ const translations = {
     submitButton: "Send feedback",
     submitSending: "Sending...",
     formDisclaimer:
-      "Add email only if you want the discount. No checkout and no live ordering.",
+      "Email is required so we can send the discount. No checkout and no live ordering.",
     formError: "There was a problem sending the form. Please try again.",
     successLabel: "Thanks",
     successTitle: "Your message has been sent.",
@@ -375,19 +375,19 @@ const translations = {
     devCard3Text:
       "Entwickelt für saubere Passform, sicheren Griff, haltbare Materialien und ein hochwertiges Ergebnis.",
     feedbackLabel: "Feedback, CHF 15 Rabatt und Kontakt",
-    feedbackTitle: "Feedback senden. E-Mail für CHF 15 Rabatt hinzufügen.",
+    feedbackTitle: "Auf die Warteliste und CHF 15 ($18) Rabatt sichern.",
     feedbackText:
-      "Sag uns, wo Überhitzung stört und welche Designabwägungen am wichtigsten sind. Deine E-Mail ist nur nötig, wenn du den <strong>CHF 15 Rabatt</strong> für die erste Charge möchtest, und wir senden genau eine E-Mail: die mit dem Rabatt.",
+      "Sag uns, wo Überhitzung stört und welche Designabwägungen am wichtigsten sind. Deine E-Mail ist erforderlich, damit wir dir den <strong>CHF 15 Rabatt</strong> für die erste Charge senden können. Wir senden genau eine E-Mail: die mit dem Rabatt.",
     stressTitle: "Typische Belastungsszenarien",
     stress1: "Direkte Sonne auf Cockpitglas oder Controller-Bildschirme",
     stress2: "Helligkeitsdrosselung und weniger Leistung während der Nutzung",
     stress3: "Abschaltrisiko beim Laden, Navigieren, Aufzeichnen oder Gaming im Freien",
-    emailLabel: "E-Mail für CHF 15 Rabatt sichern",
-    feedbackEmailOptional: "(für Feedback optional)",
+    emailLabel: "E-Mail für CHF 15 Rabatt erforderlich",
+    feedbackEmailOptional: "(erforderlich)",
     emailOptional: "(optional)",
     emailPlaceholder: "name@beispiel.ch",
     emailHelp:
-      "Leer lassen, wenn du nur Feedback senden möchtest. Trage deine E-Mail nur ein, wenn du den CHF 15 Rabatt möchtest. Wir senden genau eine E-Mail: die mit deinem Rabatt.",
+      "Trage deine E-Mail ein, damit wir dir den CHF 15 Rabatt senden können. Wir senden genau eine E-Mail: die mit deinem Rabatt.",
     useCaseLabel: "Hauptanwendung",
     selectOne: "Bitte wählen",
     useGeneral: "Allgemeine Nutzung",
@@ -431,7 +431,7 @@ const translations = {
     submitButton: "Feedback senden",
     submitSending: "Wird gesendet...",
     formDisclaimer:
-      "Nur Feedback. Trage deine E-Mail nur ein, wenn du den CHF 15 Rabatt möchtest. Kein Checkout und keine Live-Bestellung.",
+      "E-Mail ist erforderlich, damit wir den Rabatt senden können. Kein Checkout und keine Live-Bestellung.",
     formError: "Beim Senden des Formulars ist ein Problem aufgetreten. Bitte versuche es erneut.",
     successLabel: "Danke",
     successTitle: "Deine Nachricht wurde gesendet.",
@@ -499,18 +499,18 @@ translations.de.developmentTitle =
 translations.de.developmentText =
   "Cryomanta ist im Prototyping. Wir verfeinern Einsatzbereiche, K\u00FChlrichtung und Passform vor der ersten Produktionscharge und halten dich \u00FCber die Entwicklung auf dem Laufenden.";
 translations.de.feedbackTitle =
-  "Feedback senden. E-Mail für CHF 15 Rabatt hinzufügen.";
+  "Auf die Warteliste und CHF 15 ($18) Rabatt sichern.";
 translations.de.feedbackText =
-  "Sag uns, wo \u00DCberhitzung st\u00F6rt und welche Designabw\u00E4gungen am wichtigsten sind. Deine E-Mail ist nur n\u00F6tig, wenn du den <strong>CHF 15 Rabatt</strong> f\u00FCr die erste Charge m\u00F6chtest, und wir senden genau eine E-Mail: die mit dem Rabatt.";
+  "Sag uns, wo \u00DCberhitzung st\u00F6rt und welche Designabw\u00E4gungen am wichtigsten sind. Deine E-Mail ist erforderlich, damit wir dir den <strong>CHF 15 Rabatt</strong> f\u00FCr die erste Charge senden k\u00F6nnen. Wir senden genau eine E-Mail: die mit dem Rabatt.";
 translations.de.stress4 =
   "Sehr heisse Displayoberfl\u00E4chen nach direkter Sonneneinstrahlung";
 translations.de.removeAfterLabel =
-  "W\u00E4rst du in der Lage, die K\u00FChlh\u00FClle am Ger\u00E4t zu lassen, wenn sie d\u00FCnn genug ist (5 mm zus\u00E4tzliche Dicke)?";
+  "W\u00FCrdest du die H\u00FClle dauerhaft am Ger\u00E4t lassen, wenn sie d\u00FCnn genug ist (5 mm zus\u00E4tzliche Dicke)?";
 translations.de.removeYes = "Ja";
 translations.de.removeNo = "Nein";
 translations.de.removeDepends = "Kommt auf die Situation an";
 translations.de.priceComfortLabel =
-  "F\u00FChlst du dich wohl dabei, 69CHF / 85USD f\u00FCr eine Smartphone-K\u00FChlh\u00FClle zu bezahlen?";
+  "W\u00FCrdest du dich wohl dabei f\u00FChlen, CHF 69 / $85 f\u00FCr eine Smartphone-K\u00FChlh\u00FClle zu bezahlen?";
 translations.de.priceComfortYes = "Ja";
 translations.de.priceComfortMaybe = "Vielleicht";
 translations.de.priceComfortNo = "Nein";
