@@ -171,6 +171,7 @@ let currentLanguage = "en";
 let lastSubmissionHadEmail = null;
 let detectedCountryCode = "";
 let lastAutofilledCountryCode = "";
+let priorityValidationActive = false;
 let mobileScrollStages = [];
 let mobileScrollActive = false;
 let mobileScrollFrame = 0;
@@ -218,7 +219,7 @@ const translations = {
     devCard3Text:
       "Built around clean fit, confident grip, durable materials and a premium end result.",
     feedbackLabel: "Feedback, CHF 15 discount and contact",
-    feedbackTitle: "Get on the waiting list and get CHF 15 ($18) off.",
+    feedbackTitle: "Join the waitlist and get CHF 15 / $18 off.",
     feedbackText:
       "Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is required so we can send your <strong>CHF 15</strong> first-batch discount, and we will send exactly one email: the one that contains the discount.",
     stressTitle: "Typical stress cases",
@@ -228,7 +229,7 @@ const translations = {
     stress4: "Very hot screen surfaces after direct sun exposure",
     emailLabel: "Email required to get CHF 15 off",
     feedbackEmailOptional: "(required)",
-    emailOptional: "(optional)",
+    emailOptional: "(required)",
     emailPlaceholder: "name@example.com",
     emailHelp:
       "Enter your email so we can send your CHF 15 discount. We will send exactly one email: the one with your discount.",
@@ -263,7 +264,7 @@ const translations = {
     priceComfortMaybe: "Maybe",
     priceComfortNo: "No",
     priorityLegend: "Feature priorities",
-    priorityHelp: "Choose up to 3.",
+    priorityHelp: "Choose 1 to 3.",
     priorityCooling: "extreme cooling performance",
     priorityNoise: "very low noise",
     prioritySlim: "slim case",
@@ -273,7 +274,7 @@ const translations = {
     priorityBattery: "cooling without external supply",
     priorityMount: "mag safe ring in the back",
     priorityOtherPlaceholder: "Describe another priority",
-    priorityError: "Choose up to 3 feature priorities.",
+    priorityError: "Choose 1 to 3 feature priorities.",
     problemLabel: "Why do you want to solve overheating in your setup?",
     problemPlaceholder:
       "Please describe a situation how overheating occured. This will give me input for the design of the case. What activities on the phone (streaming, gaming, flying a drone, filming), how did you hold the phone (vertically or with both hands), were you at home or outside, screen exposed to the sun. Thanks a lot",
@@ -375,7 +376,7 @@ const translations = {
     devCard3Text:
       "Entwickelt für saubere Passform, sicheren Griff, haltbare Materialien und ein hochwertiges Ergebnis.",
     feedbackLabel: "Feedback, CHF 15 Rabatt und Kontakt",
-    feedbackTitle: "Auf die Warteliste und CHF 15 ($18) Rabatt sichern.",
+    feedbackTitle: "Auf die Warteliste und CHF 15 / $18 Rabatt sichern.",
     feedbackText:
       "Sag uns, wo Überhitzung stört und welche Designabwägungen am wichtigsten sind. Deine E-Mail ist erforderlich, damit wir dir den <strong>CHF 15 Rabatt</strong> für die erste Charge senden können. Wir senden genau eine E-Mail: die mit dem Rabatt.",
     stressTitle: "Typische Belastungsszenarien",
@@ -384,7 +385,7 @@ const translations = {
     stress3: "Abschaltrisiko beim Laden, Navigieren, Aufzeichnen oder Gaming im Freien",
     emailLabel: "E-Mail für CHF 15 Rabatt erforderlich",
     feedbackEmailOptional: "(erforderlich)",
-    emailOptional: "(optional)",
+    emailOptional: "(erforderlich)",
     emailPlaceholder: "name@beispiel.ch",
     emailHelp:
       "Trage deine E-Mail ein, damit wir dir den CHF 15 Rabatt senden können. Wir senden genau eine E-Mail: die mit deinem Rabatt.",
@@ -411,7 +412,7 @@ const translations = {
     deviceTabletPc: "Tablet-PC",
     deviceLaptop: "Laptop",
     priorityLegend: "Prioritäten",
-    priorityHelp: "Bis zu 3 wählen.",
+    priorityHelp: "1 bis 3 wählen.",
     priorityCooling: "bessere Kühlleistung",
     priorityNoise: "weniger Geräusch",
     prioritySlim: "schlankere Bauform",
@@ -422,7 +423,7 @@ const translations = {
     priorityOtherPlaceholder: "Andere Priorit\u00E4t beschreiben",
     priorityOutdoor: "Outdoor- und Sonnenlicht-Tauglichkeit",
     priorityMount: "Mount-Kompatibilität",
-    priorityError: "Bitte höchstens 3 Prioritäten wählen.",
+    priorityError: "Bitte 1 bis 3 Prioritäten wählen.",
     problemLabel: "Welches Überhitzungsproblem soll dieses Produkt für dich lösen?",
     problemPlaceholder:
       "Bitte beschreibe eine Situation, in der \u00DCberhitzung aufgetreten ist. Das gibt mir Input f\u00FCr das Design der H\u00FClle. Welche Aktivit\u00E4ten auf dem Handy hast du gemacht (Streaming, Gaming, Drohne fliegen, Filmen), wie hast du das Handy gehalten (vertikal oder mit beiden H\u00E4nden), warst du zu Hause oder draussen, war der Bildschirm der Sonne ausgesetzt. Vielen Dank.",
@@ -499,7 +500,7 @@ translations.de.developmentTitle =
 translations.de.developmentText =
   "Cryomanta ist im Prototyping. Wir verfeinern Einsatzbereiche, K\u00FChlrichtung und Passform vor der ersten Produktionscharge und halten dich \u00FCber die Entwicklung auf dem Laufenden.";
 translations.de.feedbackTitle =
-  "Auf die Warteliste und CHF 15 ($18) Rabatt sichern.";
+  "Auf die Warteliste und CHF 15 / $18 Rabatt sichern.";
 translations.de.feedbackText =
   "Sag uns, wo \u00DCberhitzung st\u00F6rt und welche Designabw\u00E4gungen am wichtigsten sind. Deine E-Mail ist erforderlich, damit wir dir den <strong>CHF 15 Rabatt</strong> f\u00FCr die erste Charge senden k\u00F6nnen. Wir senden genau eine E-Mail: die mit dem Rabatt.";
 translations.de.stress4 =
@@ -1220,9 +1221,13 @@ function normalizeFeedbackFormData(formData) {
   formData.delete("priorityOther");
 }
 
-function validatePriorityLimit() {
+function validatePriorityLimit(showError = priorityValidationActive) {
+  if (showError) {
+    priorityValidationActive = true;
+  }
+
   const checkedCount = priorityInputs.filter((input) => input.checked).length;
-  const isValid = checkedCount <= PRIORITY_LIMIT;
+  const isValid = checkedCount >= 1 && checkedCount <= PRIORITY_LIMIT;
   const message = isValid ? "" : getText("priorityError");
 
   priorityInputs.forEach((input) => {
@@ -1230,7 +1235,7 @@ function validatePriorityLimit() {
   });
 
   if (priorityError) {
-    priorityError.hidden = isValid;
+    priorityError.hidden = isValid || !priorityValidationActive;
   }
 
   return isValid;
@@ -1429,6 +1434,7 @@ function resetPrototypeForm() {
   successCard.hidden = true;
   feedbackForm.reset();
   lastSubmissionHadEmail = null;
+  priorityValidationActive = false;
 
   if (formError) {
     formError.hidden = true;
@@ -1494,7 +1500,7 @@ if (modelSelect) {
 
 priorityInputs.forEach((input) => {
   input.addEventListener("change", () => {
-    validatePriorityLimit();
+    validatePriorityLimit(true);
     updatePriorityOtherState(input.value === OTHER_OPTION_VALUE && input.checked);
   });
 });
@@ -1507,7 +1513,7 @@ langButtons.forEach((button) => {
 
 if (feedbackForm) {
   feedbackForm.addEventListener("submit", async (event) => {
-    const prioritiesValid = validatePriorityLimit();
+    const prioritiesValid = validatePriorityLimit(true);
 
     if (!prioritiesValid || !feedbackForm.reportValidity()) {
       event.preventDefault();
@@ -1540,6 +1546,7 @@ if (feedbackForm) {
       successCard.hidden = false;
       successCard.focus();
       feedbackForm.reset();
+      priorityValidationActive = false;
       updateWaitlistState();
       updateUseCaseOtherState();
       updatePriorityOtherState();

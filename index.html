@@ -321,7 +321,7 @@
       <div class="container feedback-grid">
         <div class="section-heading feedback-copy">
           <p class="section-label" data-i18n="feedbackLabel">Feedback, CHF 15 discount and contact</p>
-          <h2 id="feedback-title" data-i18n="feedbackTitle">Get on the waiting list and get CHF 15 ($18) off.</h2>
+          <h2 id="feedback-title" data-i18n="feedbackTitle">Join the waitlist and get CHF 15 / $18 off.</h2>
           <p class="section-text" data-i18n-html="feedbackText">
             Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is
             required so we can send your <strong>CHF 15</strong> first-batch discount, and we will send exactly one
@@ -366,7 +366,7 @@
             <div class="field-row">
               <div class="field-group">
                 <label for="use-case" data-i18n="useCaseLabel">Main use case</label>
-                <select id="use-case" name="useCase">
+                <select id="use-case" name="useCase" required>
                   <option value="" data-i18n="selectOne">Select one</option>
                   <option value="general use" data-i18n="useGeneral">General use</option>
                   <option value="watching movies" data-i18n="useMovies">Watching movies</option>
@@ -391,7 +391,7 @@
 
               <div class="field-group">
                 <label for="device-type" data-i18n="deviceTypeLabel">Device type</label>
-                <select id="device-type" name="deviceType">
+                <select id="device-type" name="deviceType" required>
                   <option value="" data-i18n="selectOne">Select one</option>
                   <option value="iPhone" data-i18n="deviceIphone">iPhone</option>
                   <option value="Android phone" data-i18n="deviceAndroidPhone">Android phone</option>
@@ -409,6 +409,7 @@
                 <select
                   id="country"
                   name="country"
+                  required
                 >
                   <option value="" data-i18n="selectOne">Select one</option>
                 </select>
@@ -416,7 +417,7 @@
 
               <div class="field-group">
                 <label for="device-model" data-i18n="modelLabel">Model</label>
-                <select id="device-model" name="deviceModel" disabled>
+                <select id="device-model" name="deviceModel" required disabled>
                   <option value="" data-i18n="modelSelectDeviceType">Select device type first</option>
                 </select>
                 <input
@@ -435,7 +436,7 @@
             <div class="field-row">
               <div class="field-group">
                 <label for="remove-after-use" data-i18n="removeAfterLabel">Would you leave the case on permanently if it was thin enough (5mm extra thickness)?</label>
-                <select id="remove-after-use" name="removeAfterUse">
+                <select id="remove-after-use" name="removeAfterUse" required>
                   <option value="" data-i18n="selectOne">Select one</option>
                   <option value="yes" data-i18n="removeYes">Yes</option>
                   <option value="no" data-i18n="removeNo">No</option>
@@ -445,7 +446,7 @@
 
               <div class="field-group">
                 <label for="price-comfort" data-i18n="priceComfortLabel">Would you feel comfortable paying CHF 69 / $85 for a smartphone cooling case?</label>
-                <select id="price-comfort" name="priceComfort">
+                <select id="price-comfort" name="priceComfort" required>
                   <option value="" data-i18n="selectOne">Select one</option>
                   <option value="yes" data-i18n="priceComfortYes">Yes</option>
                   <option value="maybe" data-i18n="priceComfortMaybe">Maybe</option>
@@ -456,7 +457,7 @@
 
             <fieldset class="field-group" aria-describedby="priority-help priority-error">
               <legend data-i18n="priorityLegend">Feature priorities</legend>
-              <p class="field-hint" id="priority-help" data-i18n="priorityHelp">Choose up to 3.</p>
+              <p class="field-hint" id="priority-help" data-i18n="priorityHelp">Choose 1 to 3.</p>
               <div class="check-grid">
                 <label class="check-card"><input type="checkbox" name="priority" value="extreme cooling performance"><span data-i18n="priorityCooling">extreme cooling performance</span></label>
                 <label class="check-card"><input type="checkbox" name="priority" value="very low noise"><span data-i18n="priorityNoise">very low noise</span></label>
@@ -478,7 +479,7 @@
                 hidden
                 disabled
               >
-              <p class="field-error" id="priority-error" role="alert" hidden data-i18n="priorityError">Choose up to 3 feature priorities.</p>
+              <p class="field-error" id="priority-error" role="alert" hidden data-i18n="priorityError">Choose 1 to 3 feature priorities.</p>
             </fieldset>
 
             <div class="field-group">
@@ -487,6 +488,7 @@
                 id="problem"
                 name="problem"
                 rows="6"
+                required
                 placeholder="Tell us what happens today, why it matters, and what would improve your use case."
                 data-i18n-placeholder="problemPlaceholder"
               ></textarea>
@@ -579,13 +581,14 @@
               <div class="field-group">
                 <label for="contact-name">
                   <span data-i18n="contactNameLabel">Name</span>
-                  <span class="optional" data-i18n="emailOptional">(optional)</span>
+                  <span class="optional" data-i18n="emailOptional">(required)</span>
                 </label>
                 <input
                   id="contact-name"
                   name="name"
                   type="text"
                   autocomplete="name"
+                  required
                   placeholder="Your name"
                   data-i18n-placeholder="contactNamePlaceholder"
                 >
