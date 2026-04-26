@@ -426,7 +426,6 @@ main {
 
 .hero-text,
 .section-text,
-.info-card p,
 .faq-item p,
 .footer-note,
 .form-disclaimer,
@@ -441,51 +440,10 @@ main {
   max-width: 31rem;
   margin: 0 0 0.95rem;
   font-size: clamp(1rem, 1.5vw, 1.15rem);
+  font-weight: 700;
   line-height: 1.38;
   color: rgba(28, 33, 40, 0.96);
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
-}
-
-.hero-message-stage {
-  position: relative;
-}
-
-.hero-message {
-  transition:
-    opacity 220ms ease,
-    transform 220ms ease;
-}
-
-.hero-message-points {
-  margin-top: 0.05rem;
-}
-
-.hero-points {
-  display: grid;
-  gap: 0.38rem;
-  margin: 0 0 0.95rem;
-  padding: 0;
-  list-style: none;
-  max-width: 33rem;
-}
-
-.hero-points li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
-  color: var(--muted-strong);
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.14);
-}
-
-.hero-points li::before {
-  content: "";
-  flex: none;
-  width: 0.55rem;
-  height: 0.55rem;
-  margin-top: 0.5rem;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #b84222, #8d2e17);
-  box-shadow: 0 0 0 0.3rem rgba(184, 66, 34, 0.12);
 }
 
 .hero-actions,
@@ -603,7 +561,6 @@ main {
 }
 
 .price-card,
-.info-card,
 .check-card,
 .feedback-aside,
 .faq-item {
@@ -648,7 +605,7 @@ main {
 }
 
 .purpose-grid {
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 
@@ -660,25 +617,6 @@ main {
   margin: 0.75rem 0 0;
   max-width: 40rem;
   font-size: 1.02rem;
-}
-
-.purpose-cards {
-  display: grid;
-  gap: 0.85rem;
-}
-
-.info-card {
-  padding: 1rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.info-card h3 {
-  margin: 0 0 0.45rem;
-  font-size: 1.15rem;
-}
-
-.info-card p {
-  margin: 0;
 }
 
 .feedback-grid {
@@ -1151,63 +1089,6 @@ textarea:focus {
     line-height: 1.33;
     color: #111111;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.26);
-  }
-
-  .hero-points {
-    display: grid;
-    gap: 0.12rem;
-    margin: 0;
-    max-width: none;
-  }
-
-  .hero-points li {
-    gap: 0.42rem;
-    font-size: 0.96rem;
-    line-height: 1.12;
-    color: #111111;
-  }
-
-  .hero-points li::before {
-    width: 0.38rem;
-    height: 0.38rem;
-    margin-top: 0.28rem;
-    box-shadow: 0 0 0 0.18rem rgba(184, 66, 34, 0.08);
-  }
-
-  .hero-message-stage {
-    height: 6.75rem;
-  }
-
-  .hero-message {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .hero-message-text,
-  .hero-message-points {
-    height: 100%;
-  }
-
-  .hero-message-text .hero-text,
-  .hero-message-points .hero-points {
-    height: 100%;
-  }
-
-  .hero-message-points .hero-points {
-    align-content: start;
-  }
-
-  .hero-message-text {
-    opacity: calc(1 - var(--hero-message-progress, 0));
-    transform: translateY(calc(var(--hero-message-progress, 0) * -14px));
-  }
-
-  .hero-message-points {
-    opacity: var(--hero-message-progress, 0);
-    transform: translateY(calc((1 - var(--hero-message-progress, 0)) * 14px));
-    pointer-events: none;
   }
 
   .hero-status-bar {

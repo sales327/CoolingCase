@@ -34,7 +34,6 @@ const ogUrl = document.getElementById("og-url");
 const ogLocale = document.getElementById("og-locale");
 const twitterTitle = document.getElementById("twitter-title");
 const twitterDescription = document.getElementById("twitter-description");
-const heroSection = document.querySelector(".hero-section");
 
 const LANGUAGE_KEY = "cooling-case-language";
 const PRIORITY_LIMIT = 3;
@@ -57,12 +56,8 @@ const MOBILE_STAGE_DEFINITIONS = [
     exitRange: 0.12,
   },
   {
-    sectionSelector: ".purpose-section",
-    itemSelectors: [".info-card"],
-  },
-  {
     sectionSelector: ".feedback-section",
-    itemSelectors: [".feedback-aside", ".form-shell"],
+    itemSelectors: [".form-shell"],
     revealStarts: [0.08, 0.2],
     exitStart: 0.9,
     exitRange: 0.12,
@@ -191,10 +186,7 @@ const translations = {
     heroTitle:
       'Keep your phone<span class="hero-title-break"></span>cool in extreme<span class="hero-title-break"></span>heat.',
     heroText:
-      "A premium cooling case concept for pilots, drone operators, field work, gaming, and other sun-exposed situations where heat, glare, throttling, and shutdown risk can interrupt the job.",
-    heroPoint1: "Robust enough for harsh outdoor heat and sustained device load",
-    heroPoint2: "Affordable enough to stay realistic for everyday field use",
-    heroPoint3: "Impeccable in fit, feel and reliability under pressure",
+      "A premium cooling phone case for drone operators, gamers, pilots, and professionals working in hard conditions and where heat can interrupt the job. Look no further, this case is for you.",
     heroCtaPrimary: "Join waitlist - CHF 15 off",
     heroCtaSecondary: "Give feedback",
     heroNote: "Concept only. Under development.",
@@ -208,26 +200,12 @@ const translations = {
     developmentLabel: "Under development",
     developmentTitle: "Development before the first batch.",
     developmentText:
-      "Cryomanta is in prototyping. We are refining use cases, cooling direction and fit before the first production batch, and we will keep you posted as development progresses.",
-    devCard1Title: "Reliable",
-    devCard1Text:
-      "Designed to stay dependable under direct sun, sustained load and rougher outdoor handling.",
-    devCard2Title: "Affordable",
-    devCard2Text:
-      "Targeted to remain realistic for pilots, field operators and demanding daily use cases.",
-    devCard3Title: "Impeccable",
-    devCard3Text:
-      "Built around clean fit, confident grip, durable materials and a premium end result.",
+      "At the moment, the Cryomanta R&D team is refining use cases, cooling direction and fit before the first production batch, and we will keep you posted as development progresses.",
     feedbackLabel: "Feedback, CHF 15 discount and contact",
-    feedbackTitle: "Join the waitlist and get CHF 15 / $18 off.",
+    feedbackTitle: "Be first and get yours with CHF 15 / $18 off.",
     feedbackText:
       "Tell us where overheating gets in the way and which design tradeoffs matter most. Your email is required so we can send your <strong>CHF 15</strong> first-batch discount, and we will send exactly one email: the one that contains the discount.",
-    stressTitle: "Typical stress cases",
-    stress1: "Direct sun on cockpit glass or controller screens",
-    stress2: "Brightness throttling and reduced performance during active use",
-    stress3: "Shutdown risk when charging, navigating, recording, or gaming outdoors",
-    stress4: "Very hot screen surfaces after direct sun exposure",
-    emailLabel: "Email required to get CHF 15 off",
+    emailLabel: "Your e-mail is required to get the discount",
     feedbackEmailOptional: "(required)",
     emailOptional: "(required)",
     emailPlaceholder: "name@example.com",
@@ -282,11 +260,9 @@ const translations = {
       "Your email is only used for one email: the message that contains your <strong>CHF 15</strong> discount.",
     submitButton: "Send feedback",
     submitSending: "Sending...",
-    formDisclaimer:
-      "Email is required so we can send the discount. No checkout and no live ordering.",
     formError: "There was a problem sending the form. Please try again.",
     successLabel: "Thanks",
-    successTitle: "Your message has been sent.",
+    successTitle: "Thanks. Stay tuned.",
     successBodyDefault:
       "Thanks for sharing your feedback. We will use incoming responses to refine the concept during development.",
     successBodyEmail:
@@ -324,7 +300,7 @@ const translations = {
     contactDisclaimer: "Direct contact only. No live ordering.",
     contactError: "There was a problem sending the message. Please try again.",
     contactSuccessLabel: "Thanks",
-    contactSuccessTitle: "Your message has been sent.",
+    contactSuccessTitle: "Thanks. Stay tuned.",
     contactSuccessBody:
       "Thanks for reaching out. We will review your message and reply if needed.",
     contactResetButton: "Send another message",
@@ -349,10 +325,7 @@ const translations = {
     heroTitle:
       'Dein Handy bleibt<span class="hero-title-break"></span>k\u00FChl, auch bei<span class="hero-title-break"></span>extremer Hitze.',
     heroText:
-      "Ein hochwertiges Kühlhüllen-Konzept für Piloten, Drohnenoperatoren, Ausseneinsätze, Gaming und andere sonnenexponierte Situationen, in denen Hitze, Blendung, Leistungsdrosselung und Abschaltrisiko stören.",
-    heroPoint1: "Robust genug für grosse Hitze im Freien und dauerhafte Gerätelast",
-    heroPoint2: "Erschwinglich genug für reale Einsätze im Alltag und im Feld",
-    heroPoint3: "Makellos in Passform, Haptik und Zuverlässigkeit unter Belastung",
+      "Eine hochwertige K\u00FChlh\u00FClle f\u00FCr Drohnenoperatoren, Gamer, Piloten und Profis, die unter harten Bedingungen arbeiten und bei denen Hitze den Einsatz unterbrechen kann. Such nicht weiter, diese H\u00FClle ist f\u00FCr dich.",
     heroCtaPrimary: "Warteliste - CHF 15 Rabatt",
     heroCtaSecondary: "Feedback geben",
     heroNote: "Nur Konzept. In Entwicklung. Aktuell nicht im Verkauf.",
@@ -366,24 +339,11 @@ const translations = {
     developmentTitle: "Entwicklung vor der Produktion.",
     developmentText:
       "Die Kühlhülle befindet sich noch in Entwicklung. Diese Seite erklärt das Konzept, sammelt Feedback zu Überhitzungsproblemen und hilft bei der Priorisierung der ersten Produktionscharge.",
-    devCard1Title: "Zuverlässig",
-    devCard1Text:
-      "Ausgelegt für direkte Sonne, dauerhafte Last und härtere Outdoor-Bedingungen.",
-    devCard2Title: "Erschwinglich",
-    devCard2Text:
-      "Ziel ist ein realistischer Preis für Piloten, Feldarbeit und anspruchsvolle Alltagsnutzung.",
-    devCard3Title: "Makellos",
-    devCard3Text:
-      "Entwickelt für saubere Passform, sicheren Griff, haltbare Materialien und ein hochwertiges Ergebnis.",
     feedbackLabel: "Feedback, CHF 15 Rabatt und Kontakt",
-    feedbackTitle: "Auf die Warteliste und CHF 15 / $18 Rabatt sichern.",
+    feedbackTitle: "Sei zuerst dabei und sichere dir CHF 15 / $18 Rabatt.",
     feedbackText:
       "Sag uns, wo Überhitzung stört und welche Designabwägungen am wichtigsten sind. Deine E-Mail ist erforderlich, damit wir dir den <strong>CHF 15 Rabatt</strong> für die erste Charge senden können. Wir senden genau eine E-Mail: die mit dem Rabatt.",
-    stressTitle: "Typische Belastungsszenarien",
-    stress1: "Direkte Sonne auf Cockpitglas oder Controller-Bildschirme",
-    stress2: "Helligkeitsdrosselung und weniger Leistung während der Nutzung",
-    stress3: "Abschaltrisiko beim Laden, Navigieren, Aufzeichnen oder Gaming im Freien",
-    emailLabel: "E-Mail für CHF 15 Rabatt erforderlich",
+    emailLabel: "Deine E-Mail ist erforderlich, um den Rabatt zu erhalten",
     feedbackEmailOptional: "(erforderlich)",
     emailOptional: "(erforderlich)",
     emailPlaceholder: "name@beispiel.ch",
@@ -431,11 +391,9 @@ const translations = {
       "Deine E-Mail wird nur für eine einzige Nachricht verwendet: die E-Mail mit deinem <strong>CHF 15 Rabatt</strong>.",
     submitButton: "Feedback senden",
     submitSending: "Wird gesendet...",
-    formDisclaimer:
-      "E-Mail ist erforderlich, damit wir den Rabatt senden können. Kein Checkout und keine Live-Bestellung.",
     formError: "Beim Senden des Formulars ist ein Problem aufgetreten. Bitte versuche es erneut.",
     successLabel: "Danke",
-    successTitle: "Deine Nachricht wurde gesendet.",
+    successTitle: "Danke. Bleib dran.",
     successBodyDefault:
       "Danke für dein Feedback. Eingehende Rückmeldungen helfen, das Konzept während der Entwicklung zu verfeinern.",
     successBodyEmail:
@@ -469,7 +427,7 @@ const translations = {
     contactError:
       "Beim Senden der Nachricht ist ein Problem aufgetreten. Bitte versuche es erneut.",
     contactSuccessLabel: "Danke",
-    contactSuccessTitle: "Deine Nachricht wurde gesendet.",
+    contactSuccessTitle: "Danke. Bleib dran.",
     contactSuccessBody: "Danke für deine Nachricht. Wir prüfen sie und antworten bei Bedarf.",
     contactResetButton: "Weitere Nachricht senden",
     privacyTitle: "Datenschutz",
@@ -488,7 +446,7 @@ translations.de.pageTitle =
 translations.de.pageDescription =
   "Cryomanta ist ein Schweizer K\u00FChlh\u00FCllen-Konzept f\u00FCr Smartphones und Tablets bei extremer Hitze, Blendung, Drosselung und Abschaltrisiko im Ausseneinsatz.";
 translations.de.heroText =
-  "Ein hochwertiges K\u00FChlh\u00FCllen-Konzept f\u00FCr Piloten, Drohnenoperatoren, Ausseneins\u00E4tze, Gaming und andere sonnenexponierte Situationen, in denen Hitze, Blendung, Leistungsdrosselung und Abschaltrisiko st\u00F6ren.";
+  "Eine hochwertige K\u00FChlh\u00FClle f\u00FCr Drohnenoperatoren, Gamer, Piloten und Profis, die unter harten Bedingungen arbeiten und bei denen Hitze den Einsatz unterbrechen kann. Such nicht weiter, diese H\u00FClle ist f\u00FCr dich.";
 translations.de.pricingNote =
   "Unverbindliche Konzeptpreise. Endg\u00FCltige Preise k\u00F6nnen sich \u00E4ndern.";
 translations.de.heroTitle =
@@ -498,13 +456,11 @@ translations.de.heroNote =
 translations.de.developmentTitle =
   "Entwicklung vor der ersten Charge.";
 translations.de.developmentText =
-  "Cryomanta ist im Prototyping. Wir verfeinern Einsatzbereiche, K\u00FChlrichtung und Passform vor der ersten Produktionscharge und halten dich \u00FCber die Entwicklung auf dem Laufenden.";
+  "Im Moment verfeinert das Cryomanta R&D-Team Einsatzbereiche, K\u00FChlrichtung und Passform vor der ersten Produktionscharge und h\u00E4lt dich \u00FCber die Entwicklung auf dem Laufenden.";
 translations.de.feedbackTitle =
-  "Auf die Warteliste und CHF 15 / $18 Rabatt sichern.";
+  "Sei zuerst dabei und sichere dir CHF 15 / $18 Rabatt.";
 translations.de.feedbackText =
   "Sag uns, wo \u00DCberhitzung st\u00F6rt und welche Designabw\u00E4gungen am wichtigsten sind. Deine E-Mail ist erforderlich, damit wir dir den <strong>CHF 15 Rabatt</strong> f\u00FCr die erste Charge senden k\u00F6nnen. Wir senden genau eine E-Mail: die mit dem Rabatt.";
-translations.de.stress4 =
-  "Sehr heisse Displayoberfl\u00E4chen nach direkter Sonneneinstrahlung";
 translations.de.removeAfterLabel =
   "W\u00FCrdest du die H\u00FClle dauerhaft am Ger\u00E4t lassen, wenn sie d\u00FCnn genug ist (5 mm zus\u00E4tzliche Dicke)?";
 translations.de.removeYes = "Ja";
@@ -1245,24 +1201,6 @@ function clampValue(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
 
-function updateHeroMessageSwap() {
-  if (!heroSection) {
-    return;
-  }
-
-  if (!mobileScrollMedia.matches || reducedMotionMedia.matches) {
-    heroSection.style.setProperty("--hero-message-progress", "0");
-    return;
-  }
-
-  const currentScroll = window.scrollY || window.pageYOffset || 0;
-  const start = Math.max(0, heroSection.offsetTop + 56);
-  const range = Math.max(180, Math.min(300, heroSection.offsetHeight * 0.3));
-  const progress = clampValue((currentScroll - start) / range);
-
-  heroSection.style.setProperty("--hero-message-progress", progress.toFixed(3));
-}
-
 function clearMobileScrollStages() {
   if (mobileScrollFrame) {
     window.cancelAnimationFrame(mobileScrollFrame);
@@ -1385,7 +1323,6 @@ function requestMobileScrollStageUpdate() {
 
   mobileScrollFrame = window.requestAnimationFrame(() => {
     mobileScrollFrame = 0;
-    updateHeroMessageSwap();
 
     if (mobileScrollActive) {
       updateMobileScrollStages();
@@ -1398,12 +1335,10 @@ function syncMobileScrollStages() {
 
   if (!shouldEnable) {
     clearMobileScrollStages();
-    updateHeroMessageSwap();
     return;
   }
 
   buildMobileScrollStages();
-  updateHeroMessageSwap();
   updateMobileScrollStages();
 }
 
